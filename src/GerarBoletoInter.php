@@ -1,5 +1,7 @@
 <?php
 
+namespace Divulgueregional\ApiInterV2;
+
 class GerarBoletoInter {
 
     protected $urlInter = "";
