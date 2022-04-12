@@ -1,0 +1,19 @@
+{
+    "name": "divulgueregional/api-inter-v2",
+    "description": "API Inter gera\u0000\u0000o de boletos",
+    "license": "mit",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Divulgueregional\\ApiInterV2\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Roseno Matos",
+            "email": "rosenomatos@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
