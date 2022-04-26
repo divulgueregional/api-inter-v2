@@ -11,7 +11,8 @@ class InterBanking
     protected $certificateKey;
 
     protected $client;
-    // protected $token = 'ffe38570-5e06-43e4-a8b3-3126f4c4d68b';
+    protected $token;
+    protected $ok;
 
     function __construct($dd)
     {
@@ -21,11 +22,15 @@ class InterBanking
         $this->dd = $dd;
         if(isset($dd->token)){
             if($dd->token==''){
-                if(isset($_SESSION['tokenInter']['token'])){
-                    $this->controlToken();//verifica a geração do token
+                if($dd->token_auto>1){
+                    if(isset($_SESSION['tokenInter']['token'])){
+                        $this->controlToken();//verifica a geração do token
+                    }else{
+                        //gerar o token
+                        $this->gerarToken();
+                    }
                 }else{
-                    //gerar o token
-                    $this->gerarToken();
+                    $this->ok = "Informe o token";//é obrigatório informar o token
                 }
             }else{
                 $this->token = $dd->token;
@@ -101,29 +106,33 @@ class InterBanking
 
     public function checkSaldo()
     {
-        try {
-            $response = $this->client->request(
-                'GET',
-                '/banking/v2/saldo',
-                [
-                    'verify' => $this->dd->certificate,
-                    'cert' => $this->dd->certificate,
-                    'ssl_key' => $this->dd->certificateKey,
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$this->token}"
+        if($this->ok==''){
+            try {
+                $response = $this->client->request(
+                    'GET',
+                    '/banking/v2/saldo',
+                    [
+                        'verify' => $this->dd->certificate,
+                        'cert' => $this->dd->certificate,
+                        'ssl_key' => $this->dd->certificateKey,
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Authorization' => "Bearer {$this->token}"
+                        ]
                     ]
-                ]
-            );
+                );
 
-            return json_decode($response->getBody()->getContents());
-        } catch (ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $response = $e->getResponse()->getReasonPhrase();
+                return json_decode($response->getBody()->getContents());
+            } catch (ClientException $e) {
+                $statusCode = $e->getResponse()->getStatusCode();
+                $response = $e->getResponse()->getReasonPhrase();
 
-            return ['error' => $response, 'statusCode' => $statusCode];
-        } catch (\Exception $e) {
-            throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
+                return ['error' => $response, 'statusCode' => $statusCode];
+            } catch (\Exception $e) {
+                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
+            }
+        }else{
+            return $this->ok;
         }
     }
 }
