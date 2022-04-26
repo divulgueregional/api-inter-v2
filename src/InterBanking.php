@@ -1,72 +1,123 @@
 <?php
-
 namespace Divulgueregional\ApiInterV2;
 
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class InterBanking
 {
-    protected $certificate = '../cert/Inter_API_Certificado.crt';
-    protected $certificateKey = '../cert/Inter_API_Chave.key';
+    protected $certificate;
+    protected $certificateKey;
 
     protected $client;
-    protected $token;
+    // protected $token = 'ffe38570-5e06-43e4-a8b3-3126f4c4d68b';
 
-    function __construct($certificate = null, $certificateKey)
+    function __construct($dd)
     {
         $this->client = new Client([
             'base_uri' => 'https://cdpj.partners.bancointer.com.br',
-            'headers' => [
-                'Accept' => 'application/json'
-            ]
         ]);
+        $this->dd = $dd;
+        if(isset($_SESSION['tokenInter']['token'])){
+            $this->controlToken();//verifica a geração do token
+        }else{
+            //gerar o token
+            $this->gerarToken();
+        }
     }
 
-    public function getToken(
-        $client_id = '50481fa5-c60b-49cf-9766-3324b8efc3a5',
-        $client_secret = '621079a8-db72-4da4-887c-0d6c06011c92'
-    ) {
+    private function controlToken(){
+        date_default_timezone_set('America/Sao_Paulo');
+        if($_SESSION['tokenInter']['token'] !=''){
+            //token gerado, conferir validade
+            if($_SESSION['tokenInter']['data'] == date('Y-m-d')){
+                //data válida, verificar horário
+                $hora_decorridas = gmdate('H:i:s', strtotime( date('H:i:s') ) - strtotime( $_SESSION['tokenInter']['hora'] ) );
+                $hora = explode(":", $hora_decorridas);
+                if($hora[0]=='00'){
+                    if($hora[1]<'56'){
+                        $this->token = $_SESSION['tokenInter']['token'];
+                    }else{
+                        //passou de 56 min, gerar novo token
+                        $this->gerarToken();
+                    }
+                }else{
+                    //passou de 1 hora, gerar token
+                    $this->gerarToken();
+                }
+            }else{
+                //data inválida, gerar token
+                $this->gerarToken();
+            }
+        }else{
+            $this->gerarToken();
+        }
+    }
+
+    public function gerarToken(){
+        $_SESSION['tokenInter'] = [];
+        $_SESSION['tokenInter']['data'] = date('Y-m-d');
+        $_SESSION['tokenInter']['hora'] = date('H:i:s');
+        $_SESSION['tokenInter']['token'] = $this->getToken();
+    }
+
+    private function getToken() {
         try {
             $response = $this->client->request(
                 'POST',
                 '/oauth/v2/token',
                 [
-                    'cert' => $this->certificate,
-                    'ssl_key' => $this->certificateKey,
-                    'body' => [
-                        'client_id' => $client_id,
-                        'client_secret' => $client_secret,
+                    'headers' => [
+                        'Accept' => 'application/json'
+                    ],
+                    'cert' => $this->dd->certificate,
+                    'ssl_key' => $this->dd->certificateKey,
+                    'form_params' => [
+                        'client_id' => $this->dd->client_id,
+                        'client_secret' => $this->dd->client_secret,
                         'grant_type' => 'client_credentials',
                         'scope' => 'extrato.read boleto-cobranca.read boleto-cobranca.write'
                     ]
                 ]
             );
 
-            return $response->getBody();
-        } catch (\Throwable $th) {
-            //throw $th;
+            $retorno = json_decode($response->getBody()->getContents());
+            if (isset($retorno->access_token)) {
+                $this->token = $retorno->access_token;
+            }
+
+            return $this->token;
+        } catch (\Exception $e) {
+            new Exception("Falha ao gerar Token: {$e->getMessage()}");
         }
     }
 
-    public function checkSaldo(string $data)
+    public function checkSaldo()
     {
         try {
             $response = $this->client->request(
                 'GET',
                 '/banking/v2/saldo',
                 [
-                    'cert' => $this->certificate,
-                    'ssl_key' => $this->certificateKey,
-                    'header' => [
-                        'authorization' => "bearer {$this->token}"
+                    'verify' => $this->dd->certificate,
+                    'cert' => $this->dd->certificate,
+                    'ssl_key' => $this->dd->certificateKey,
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => "Bearer {$this->token}"
                     ]
                 ]
             );
 
-            return $response->getBody();
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $response = $e->getResponse()->getReasonPhrase();
+
+            return ['error' => $response, 'statusCode' => $statusCode];
         } catch (\Exception $e) {
-            new Exception("Falha ao consultar saldo: {$e->getMessage()}");
+            throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
         }
     }
 }
