@@ -17,6 +17,6 @@ Para trazer o saldo da conta
     $bankingInter = new InterBanking($dd);
 
     echo "<pre>";
-    $saldo = $bankingInter->checkSaldo('');
+    $saldo = $bankingInter->checkSaldo();
     print_r($saldo);
 ```
