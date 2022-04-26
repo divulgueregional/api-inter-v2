@@ -9,6 +9,7 @@ Para trazer o saldo da conta
     $dd->certificateKey = '../cert/Inter_API_Chave.key';//local do certifiado key
     $dd->client_id = '';//seu client_id
     $dd->client_secret = '';//client_secret
+    $dd->token = '';//informe o token
     $dd->data = '';//caso não informar traz o saldo do dia
 
     

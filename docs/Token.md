@@ -31,5 +31,6 @@ Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informa
 ```
 
 ## Observação
-Para usar os recusrsos da API não necessita gerar o token, pois a API irá controlar o token automaticamente.<br>
-Use esse exemplo para ter certeza que o token está sendo gerado corretamente
+Armazene e gerencie o token da forma que achar mais conveniente para você<br>
+Pois para poder usar os recursos da API vai precisar desse token<br>
+O Token tem uma válidade de 1 hora após ele ser gerado.
