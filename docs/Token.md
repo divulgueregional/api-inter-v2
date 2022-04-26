@@ -21,8 +21,15 @@ Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informa
     $dd->certificateKey = '../cert/Inter_API_Chave.key';
     $dd->client_id = '';//seu client_id
     $dd->client_secret = '';//client_secret
-    $dd->data = '';
 
     
     $bankingInter = new InterBanking($dd);
+
+    $token = $bankingInter->getToken();
+    print_r($token);
+    
 ```
+
+## Observação
+Para usar os recusrsos da API não necessita gerar o token, pois ela irá controlar o token automaticamente.<br>
+Use esse exemplo para ter certeza que o token está sendo gerado corretamente
