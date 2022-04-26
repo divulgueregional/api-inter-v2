@@ -17,8 +17,8 @@ Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informa
 
 ```php
     $dd = new stdClass;
-    $dd->certificate = '../cert/Inter_API_Certificado.crt';
-    $dd->certificateKey = '../cert/Inter_API_Chave.key';
+    $dd->certificate = '../cert/Inter_API_Certificado.crt';//local do certificado crt
+    $dd->certificateKey = '../cert/Inter_API_Chave.key';//local do certificado key
     $dd->client_id = '';//seu client_id
     $dd->client_secret = '';//client_secret
 
