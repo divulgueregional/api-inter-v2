@@ -19,11 +19,17 @@ class InterBanking
             'base_uri' => 'https://cdpj.partners.bancointer.com.br',
         ]);
         $this->dd = $dd;
-        if(isset($_SESSION['tokenInter']['token'])){
-            $this->controlToken();//verifica a geração do token
-        }else{
-            //gerar o token
-            $this->gerarToken();
+        if(isset($dd->token)){
+            if($dd->token==''){
+                if(isset($_SESSION['tokenInter']['token'])){
+                    $this->controlToken();//verifica a geração do token
+                }else{
+                    //gerar o token
+                    $this->gerarToken();
+                }
+            }else{
+                $this->token = $dd->token;
+            }
         }
     }
 
@@ -62,7 +68,7 @@ class InterBanking
         $_SESSION['tokenInter']['token'] = $this->getToken();
     }
 
-    private function getToken() {
+    public function getToken() {
         try {
             $response = $this->client->request(
                 'POST',
