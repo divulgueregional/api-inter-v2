@@ -110,7 +110,7 @@ class InterBanking
             try {
                 $response = $this->client->request(
                     'GET',
-                    '/banking/v2/saldo',
+                    '/banking/v2/saldo?dataSaldo='.$this->dd->dataSaldo,
                     [
                         'verify' => $this->dd->certificate,
                         'cert' => $this->dd->certificate,
