@@ -13,7 +13,7 @@ Clique em conta digital e selecione Gestão de aplicações<br>
 - Clique na seta  esquerda ao lado do nome da aplicação e pegue ClientId e ClientSecret.
 
 ## Geração do Token
-Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informar o local que está os certificados e informar client_id e client_secret
+Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informar o local que estão os certificados e informar client_id e client_secret
 
 ```php
     $dd = new stdClass;
