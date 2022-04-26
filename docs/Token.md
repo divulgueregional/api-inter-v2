@@ -2,7 +2,7 @@
 
 ## O Token deve ser gerado com certificado
 
-Os tokens devem ser gerados com o uso do certificado, que foi obtido na criação da aplicação, caso contrário, o token gerado será inválido e seu sistema não conseguirá consumir os serviços do Inter.
+O tokem devem ser gerado com o uso do certificado, que foi obtido na criação da aplicação, caso contrário, o token gerado será inválido e seu sistema não conseguirá consumir os serviços do Inter.
 
 ## Certificado
 Faça login no site do Banco do Inter.<br>
@@ -12,8 +12,8 @@ Clique em conta digital e selecione Gestão de aplicações<br>
 - baixe o certificado em seu computador (são 2)
 - Clique na seta  esquerda ao lado do nome da aplicação e pegue ClientId e ClientSecret.
 
-## Geraçõ do Token
-Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informar o local que esta os certificados e informar 
+## Geração do Token
+Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informar o local que esta os certificados e informar client_id e client_secret
 
 ```php
     $dd = new stdClass;
@@ -31,5 +31,5 @@ Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informa
 ```
 
 ## Observação
-Para usar os recusrsos da API não necessita gerar o token, pois ela irá controlar o token automaticamente.<br>
+Para usar os recusrsos da API não necessita gerar o token, pois a API irá controlar o token automaticamente.<br>
 Use esse exemplo para ter certeza que o token está sendo gerado corretamente
