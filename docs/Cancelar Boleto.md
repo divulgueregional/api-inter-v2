@@ -5,6 +5,11 @@ Cancelar o boleto<br>
 Necessita informar o nossoNumero.
 
 ```php
+    session_start();
+    require '../../../vendor/autoload.php';
+
+    use Divulgueregional\ApiInterV2\InterBanking;
+
     $dd = new stdClass;
     $dd->certificate = '../cert/Inter_API_Certificado.crt';//local do certifiado crt
     $dd->certificateKey = '../cert/Inter_API_Chave.key';//local do certifiado key
@@ -14,9 +19,12 @@ Necessita informar o nossoNumero.
     $dd->token = '';//informe o token
     $dd->nossoNumero = '';//caso não informar traz o saldo do dia
 
-    
-    $bankingInter = new InterBanking($dd);
+    try {
+        $bankingInter = new InterBanking($dd);
 
-    $cancelarBoleto = $bankingInter->cancelarBoleto();
-    print_r($cancelarBoleto);
+        $cancelarBoleto = $bankingInter->cancelarBoleto();
+        print_r($cancelarBoleto);
+    } catch (\Exception $e) {
+        echo $e->getMessage();
+    }
 ```

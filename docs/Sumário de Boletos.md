@@ -9,7 +9,6 @@ Sumário de boletos traz o resumo dos boletos através de filtros
 
     use Divulgueregional\ApiInterV2\InterBanking;
 
-
     $dd = new stdClass;
     $dd->certificate = '../cert/Inter_API_Certificado.crt';//local do certifiado crt
     $dd->certificateKey = '../cert/Inter_API_Chave.key';//local do certifiado key
@@ -27,7 +26,7 @@ Sumário de boletos traz o resumo dos boletos através de filtros
     $dd->cpfCnpj = '';
     $dd->nossoNumero = '';
 
-    try {    
+    try {
         $bankingInter = new InterBanking($dd);
 
         $sumarioBoletos = $bankingInter->sumarioBoletos();

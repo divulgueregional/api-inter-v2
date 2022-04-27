@@ -4,6 +4,11 @@
 Para trazer o saldo da conta
 
 ```php
+    session_start();
+    require '../../../vendor/autoload.php';
+
+    use Divulgueregional\ApiInterV2\InterBanking;
+
     $dd = new stdClass;
     $dd->certificate = '../cert/Inter_API_Certificado.crt';//local do certifiado crt
     $dd->certificateKey = '../cert/Inter_API_Chave.key';//local do certifiado key
@@ -13,10 +18,13 @@ Para trazer o saldo da conta
     $dd->token = '';//informe o token
     $dd->dataSaldo = '';//caso não informar traz o saldo do dia
 
-    
-    $bankingInter = new InterBanking($dd);
+    try {
+        $bankingInter = new InterBanking($dd);
 
-    echo "<pre>";
-    $saldo = $bankingInter->checkSaldo();
-    print_r($saldo);
+        echo "<pre>";
+        $saldo = $bankingInter->checkSaldo();
+        print_r($saldo);
+    } catch (\Exception $e) {
+        echo $e->getMessage();
+    }
 ```
