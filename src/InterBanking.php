@@ -299,4 +299,36 @@ class InterBanking
             return $this->ok;
         }
     }
+
+    public function colecaoBoletos()
+    {
+        if($this->ok==''){
+            try {
+                $response = $this->client->request(
+                    'GET',
+                    "/cobranca/v2/boletos?dataInicial={$this->dd->dataInicial}&dataFinal={$this->dd->dataFinal}&filtrarDataPor={$this->dd->filtrarDataPor}&situacao={$this->dd->situacao}&nome={$this->dd->nome}&email={$this->dd->email}&cpfCnpj={$this->dd->cpfCnpj}&nossoNumero={$this->dd->nossoNumero}&itensPorPagina={$this->dd->itensPorPagina}&paginaAtual={$this->dd->paginaAtual}&ordenarPor={$this->dd->ordenarPor}&tipoOrdenacao={$this->dd->tipoOrdenacao}",
+                    [
+                        'verify' => $this->dd->certificate,
+                        'cert' => $this->dd->certificate,
+                        'ssl_key' => $this->dd->certificateKey,
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Authorization' => "Bearer {$this->token}"
+                        ]
+                    ]
+                );
+
+                return json_decode($response->getBody()->getContents());
+            } catch (ClientException $e) {
+                $statusCode = $e->getResponse()->getStatusCode();
+                $response = $e->getResponse()->getReasonPhrase();
+
+                return ['error' => $response, 'statusCode' => $statusCode];
+            } catch (\Exception $e) {
+                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
+            }
+        }else{
+            return $this->ok;
+        }
+    }
 }
