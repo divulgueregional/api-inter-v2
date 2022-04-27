@@ -7,6 +7,7 @@
 - Boleto Detalhado
 - Boleto PDF
 - Cancelar Boleto
-- Sumário do boleto
+- Sumário de boletos
+- Coleção de boletos
 
 Consulte a pasta docs
