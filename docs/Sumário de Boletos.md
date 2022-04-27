@@ -1,7 +1,7 @@
 # SUMÁRIO DE BOLETOS-INTER
 
 ## Sumário de Boletos
-Sumário de boletos traz o resumo dos boletos através de filtros
+Sumário de boletos traz o resumo dos boletos de acordo com os de filtros informados
 
 ```php
     session_start();
