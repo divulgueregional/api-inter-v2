@@ -167,4 +167,40 @@ class InterBanking
             return $this->ok;
         }
     }
+
+    
+    ##############################################
+    ######## COBRANÇAS ###########################
+    ##############################################
+    public function boletoDetalhado()
+    {
+        if($this->ok==''){
+            try {
+                $response = $this->client->request(
+                    'GET',
+                    "/cobranca/v2/boletos/{$this->dd->nossoNumero}",
+                    [
+                        'verify' => $this->dd->certificate,
+                        'cert' => $this->dd->certificate,
+                        'ssl_key' => $this->dd->certificateKey,
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Authorization' => "Bearer {$this->token}"
+                        ]
+                    ]
+                );
+
+                return json_decode($response->getBody()->getContents());
+            } catch (ClientException $e) {
+                $statusCode = $e->getResponse()->getStatusCode();
+                $response = $e->getResponse()->getReasonPhrase();
+
+                return ['error' => $response, 'statusCode' => $statusCode];
+            } catch (\Exception $e) {
+                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
+            }
+        }else{
+            return $this->ok;
+        }
+    }
 }
