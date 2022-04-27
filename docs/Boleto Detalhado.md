@@ -1,7 +1,8 @@
-# CONSULTAR SALDO-INTER
+# BOLETO DETALHADO-INTER
 
-## Consultar Saldo
-Para trazer o saldo da conta
+## Consultar boleto
+Busca todos os dados do boleto<br>
+Necessita informar o nossoNumero.
 
 ```php
     $dd = new stdClass;

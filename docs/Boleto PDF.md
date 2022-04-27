@@ -1,7 +1,8 @@
-# CONSULTAR SALDO-INTER
+# BOLETO PDF-INTER
 
-## Consultar Saldo
-Para trazer o saldo da conta
+## Boleto PDF
+Gera o boleto em formato de pdf<br>
+Necessita informar o nossoNumero.
 
 ```php
     $dd = new stdClass;
