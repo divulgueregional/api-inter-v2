@@ -29,7 +29,7 @@ Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informa
 
     try {
         $bankingInter = new InterBanking();
-        $token = $bankingInter->getToken();
+        $token = $bankingInter->getToken($config);
         print_r($token);
     } catch (\Exception $e) {
         echo $e->getMessage();
