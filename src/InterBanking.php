@@ -1,79 +1,31 @@
 <?php
+
 namespace Divulgueregional\ApiInterV2;
 
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7\Message;
 
 class InterBanking
 {
     protected $certificate;
     protected $certificateKey;
-
-    protected $client;
     protected $token;
-    protected $ok;
+    protected $client;
 
-    function __construct($dd)
+    function __construct()
     {
         $this->client = new Client([
             'base_uri' => 'https://cdpj.partners.bancointer.com.br',
         ]);
-        $this->dd = $dd;
-        if(isset($dd->token)){
-            if($dd->token==''){
-                if($dd->token_auto>1){
-                    if(isset($_SESSION['tokenInter']['token'])){
-                        $this->controlToken();//verifica a geração do token
-                    }else{
-                        //gerar o token
-                        $this->gerarToken();
-                    }
-                }else{
-                    $this->ok = "Informe o token";//é obrigatório informar o token
-                }
-            }else{
-                $this->token = $dd->token;
-            }
-        }
     }
 
-    private function controlToken(){
-        date_default_timezone_set('America/Sao_Paulo');
-        if($_SESSION['tokenInter']['token'] !=''){
-            //token gerado, conferir validade
-            if($_SESSION['tokenInter']['data'] == date('Y-m-d')){
-                //data válida, verificar horário
-                $hora_decorridas = gmdate('H:i:s', strtotime( date('H:i:s') ) - strtotime( $_SESSION['tokenInter']['hora'] ) );
-                $hora = explode(":", $hora_decorridas);
-                if($hora[0]=='00'){
-                    if($hora[1]<'56'){
-                        $this->token = $_SESSION['tokenInter']['token'];
-                    }else{
-                        //passou de 56 min, gerar novo token
-                        $this->gerarToken();
-                    }
-                }else{
-                    //passou de 1 hora, gerar token
-                    $this->gerarToken();
-                }
-            }else{
-                //data inválida, gerar token
-                $this->gerarToken();
-            }
-        }else{
-            $this->gerarToken();
-        }
-    }
-
-    public function gerarToken(){
-        $_SESSION['tokenInter'] = [];
-        $_SESSION['tokenInter']['data'] = date('Y-m-d');
-        $_SESSION['tokenInter']['hora'] = date('H:i:s');
-        $_SESSION['tokenInter']['token'] = $this->getToken();
-    }
-
-    public function getToken() {
+    ##############################################
+    ######## TOKEN ###############################
+    ##############################################
+    public function getToken($config)
+    {
         try {
             $response = $this->client->request(
                 'POST',
@@ -82,11 +34,11 @@ class InterBanking
                     'headers' => [
                         'Accept' => 'application/json'
                     ],
-                    'cert' => $this->dd->certificate,
-                    'ssl_key' => $this->dd->certificateKey,
+                    'cert' => $config['certificate'],
+                    'ssl_key' => $config['certificateKey'],
                     'form_params' => [
-                        'client_id' => $this->dd->client_id,
-                        'client_secret' => $this->dd->client_secret,
+                        'client_id' => $config['client_id'],
+                        'client_secret' => $config['client_secret'],
                         'grant_type' => 'client_credentials',
                         'scope' => 'extrato.read boleto-cobranca.read boleto-cobranca.write'
                     ]
@@ -103,232 +55,253 @@ class InterBanking
             new Exception("Falha ao gerar Token: {$e->getMessage()}");
         }
     }
+    ##############################################
+    ######## FIM TOKEN ###########################
+    ##############################################
 
-    public function checkSaldo()
+    ##############################################
+    ######## BANKING #############################
+    ##############################################
+    public function checkSaldo($config, $filters)
     {
-        if($this->ok==''){
-            try {
-                $response = $this->client->request(
-                    'GET',
-                    "/banking/v2/saldo?dataSaldo={$this->dd->dataSaldo}",
-                    [
-                        'verify' => $this->dd->certificate,
-                        'cert' => $this->dd->certificate,
-                        'ssl_key' => $this->dd->certificateKey,
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Authorization' => "Bearer {$this->token}"
-                        ]
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/saldo",
+                [
+                    'verify' => $config['certificate'],
+                    'cert' => $config['certificate'],
+                    'ssl_key' => $config['certificateKey'],
+                    'query' => $filters,
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => "Bearer {$config['token']}"
                     ]
-                );
-
-                return json_decode($response->getBody()->getContents());
-            } catch (ClientException $e) {
-                $statusCode = $e->getResponse()->getStatusCode();
-                $response = $e->getResponse()->getReasonPhrase();
-
-                return ['error' => $response, 'statusCode' => $statusCode];
-            } catch (\Exception $e) {
-                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
-            }
-        }else{
-            return $this->ok;
+                ]
+            );
+            
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $response = $e->getResponse()->getReasonPhrase();
+            return ['error' => $response, 'statusCode' => $statusCode];
+        } catch (\Exception $e) {
+            throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
         }
     }
 
-    public function checkExtrato()
+    public function checkExtrato($config, $filters)
     {
-        if($this->ok==''){
-            try {
-                $response = $this->client->request(
-                    'GET',
-                    "/banking/v2/extrato?dataInicio={$this->dd->dataInicio}&dataFim={$this->dd->dataFim}",
-                    [
-                        'verify' => $this->dd->certificate,
-                        'cert' => $this->dd->certificate,
-                        'ssl_key' => $this->dd->certificateKey,
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Authorization' => "Bearer {$this->token}"
-                        ]
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/extrato",
+                [
+                    'verify' => $config['certificate'],
+                    'cert' => $config['certificate'],
+                    'ssl_key' => $config['certificateKey'],
+                    'query' => $filters,
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => "Bearer {$config['token']}"
                     ]
-                );
+                ]
+            );
 
-                return json_decode($response->getBody()->getContents());
-            } catch (ClientException $e) {
-                $statusCode = $e->getResponse()->getStatusCode();
-                $response = $e->getResponse()->getReasonPhrase();
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $response = $e->getResponse()->getReasonPhrase();
 
-                return ['error' => $response, 'statusCode' => $statusCode];
-            } catch (\Exception $e) {
-                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
-            }
-        }else{
-            return $this->ok;
+            return ['error' => $response, 'statusCode' => $statusCode];
+        } catch (\Exception $e) {
+            throw new Exception("Falha ao consultar o extrato: {$e->getMessage()}");
         }
     }
+    ##############################################
+    ######## FIM BANKING #########################
+    ##############################################
 
-    
+
     ##############################################
     ######## COBRANÇAS ###########################
     ##############################################
-    public function boletoDetalhado()
+    public function boletoDetalhado($config, $filters)
     {
-        if($this->ok==''){
-            try {
-                $response = $this->client->request(
-                    'GET',
-                    "/cobranca/v2/boletos/{$this->dd->nossoNumero}",
-                    [
-                        'verify' => $this->dd->certificate,
-                        'cert' => $this->dd->certificate,
-                        'ssl_key' => $this->dd->certificateKey,
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Authorization' => "Bearer {$this->token}"
-                        ]
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v2/boletos/{$filters['nossoNumero']}",
+                [
+                    'verify' => $config['certificate'],
+                    'cert' => $config['certificate'],
+                    'ssl_key' => $config['certificateKey'],
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => "Bearer {$config['token']}"
                     ]
-                );
+                ]
+            );
 
-                return json_decode($response->getBody()->getContents());
-            } catch (ClientException $e) {
-                $statusCode = $e->getResponse()->getStatusCode();
-                $response = $e->getResponse()->getReasonPhrase();
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $response = $e->getResponse()->getReasonPhrase();
 
-                return ['error' => $response, 'statusCode' => $statusCode];
-            } catch (\Exception $e) {
-                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
-            }
-        }else{
-            return $this->ok;
+            return ['error' => $response, 'statusCode' => $statusCode];
+        } catch (\Exception $e) {
+            throw new Exception("Falha ao consultar boleto detalhado: {$e->getMessage()}");
         }
     }
 
-    public function boletoPDF()
+    public function boletoPDF($config, $filters)
     {
-        if($this->ok==''){
-            try {
-                $response = $this->client->request(
-                    'GET',
-                    "/cobranca/v2/boletos/{$this->dd->nossoNumero}/pdf",
-                    [
-                        'verify' => $this->dd->certificate,
-                        'cert' => $this->dd->certificate,
-                        'ssl_key' => $this->dd->certificateKey,
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Authorization' => "Bearer {$this->token}"
-                        ]
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v2/boletos/{$filters['nossoNumero']}/pdf",
+                [
+                    'verify' => $config['certificate'],
+                    'cert' => $config['certificate'],
+                    'ssl_key' => $config['certificateKey'],
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => "Bearer {$config['token']}"
                     ]
-                );
+                ]
+            );
 
-                return json_decode($response->getBody()->getContents());
-            } catch (ClientException $e) {
-                $statusCode = $e->getResponse()->getStatusCode();
-                $response = $e->getResponse()->getReasonPhrase();
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $response = $e->getResponse()->getReasonPhrase();
 
-                return ['error' => $response, 'statusCode' => $statusCode];
-            } catch (\Exception $e) {
-                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
-            }
-        }else{
-            return $this->ok;
+            return ['error' => $response, 'statusCode' => $statusCode];
+        } catch (\Exception $e) {
+            throw new Exception("Falha ao consultar pdf do boleto: {$e->getMessage()}");
         }
     }
 
-    public function cancelarBoleto()
+    public function cancelarBoleto($config, $filters)
     {
-        if($this->ok==''){
-            try {
-                $response = $this->client->request(
-                    'GET',
-                    "/cobranca/v2/boletos/{$this->dd->nossoNumero}/cancelar",
-                    [
-                        'verify' => $this->dd->certificate,
-                        'cert' => $this->dd->certificate,
-                        'ssl_key' => $this->dd->certificateKey,
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Authorization' => "Bearer {$this->token}"
-                        ]
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/cobranca/v2/boletos/{$config['nossoNumero']}/cancelar",
+                [
+                    'verify' => $config['certificate'],
+                    'cert' => $config['certificate'],
+                    'ssl_key' => $config['certificateKey'],
+                    'body' => json_encode($filters),
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-Type' => 'application/json',
+                        'Authorization' => "Bearer {$config['token']}"
                     ]
-                );
+                ]
+            );
 
-                return json_decode($response->getBody()->getContents());
-            } catch (ClientException $e) {
-                $statusCode = $e->getResponse()->getStatusCode();
-                $response = $e->getResponse()->getReasonPhrase();
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $response = $e->getResponse()->getReasonPhrase();
 
-                return ['error' => $response, 'statusCode' => $statusCode];
-            } catch (\Exception $e) {
-                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
-            }
-        }else{
-            return $this->ok;
+            return ['error' => $response, 'statusCode' => $statusCode];
+        } catch (\Exception $e) {
+            throw new Exception("Falha ao cancelar o boleto: {$e->getMessage()}");
         }
     }
 
-    public function sumarioBoletos()
+    public function sumarioBoletos($config, $filters)
     {
-        if($this->ok==''){
-            try {
-                $response = $this->client->request(
-                    'GET',
-                    "/cobranca/v2/boletos/sumario?dataInicial={$this->dd->dataInicial}&dataFinal={$this->dd->dataFinal}&filtrarDataPor={$this->dd->filtrarDataPor}&situacao={$this->dd->situacao}&nome={$this->dd->nome}&email={$this->dd->email}&cpfCnpj={$this->dd->cpfCnpj}&nossoNumero={$this->dd->nossoNumero}",
-                    [
-                        'verify' => $this->dd->certificate,
-                        'cert' => $this->dd->certificate,
-                        'ssl_key' => $this->dd->certificateKey,
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Authorization' => "Bearer {$this->token}"
-                        ]
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v2/boletos/sumario",
+                [
+                    'verify' => $config['certificate'],
+                    'cert' => $config['certificate'],
+                    'ssl_key' => $config['certificateKey'],
+                    'query' => $filters,
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => "Bearer {$config['token']}"
                     ]
-                );
+                ]
+            );
 
-                return json_decode($response->getBody()->getContents());
-            } catch (ClientException $e) {
-                $statusCode = $e->getResponse()->getStatusCode();
-                $response = $e->getResponse()->getReasonPhrase();
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $response = $e->getResponse()->getReasonPhrase();
 
-                return ['error' => $response, 'statusCode' => $statusCode];
-            } catch (\Exception $e) {
-                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
-            }
-        }else{
-            return $this->ok;
+            return ['error' => $response, 'statusCode' => $statusCode];
+        } catch (\Exception $e) {
+            throw new Exception("Falha ao consultar o sumário: {$e->getMessage()}");
         }
     }
 
-    public function colecaoBoletos()
+    public function colecaoBoletos($config, $filters)
     {
-        if($this->ok==''){
-            try {
-                $response = $this->client->request(
-                    'GET',
-                    "/cobranca/v2/boletos?dataInicial={$this->dd->dataInicial}&dataFinal={$this->dd->dataFinal}&filtrarDataPor={$this->dd->filtrarDataPor}&situacao={$this->dd->situacao}&nome={$this->dd->nome}&email={$this->dd->email}&cpfCnpj={$this->dd->cpfCnpj}&nossoNumero={$this->dd->nossoNumero}&itensPorPagina={$this->dd->itensPorPagina}&paginaAtual={$this->dd->paginaAtual}&ordenarPor={$this->dd->ordenarPor}&tipoOrdenacao={$this->dd->tipoOrdenacao}",
-                    [
-                        'verify' => $this->dd->certificate,
-                        'cert' => $this->dd->certificate,
-                        'ssl_key' => $this->dd->certificateKey,
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Authorization' => "Bearer {$this->token}"
-                        ]
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v2/boletos",
+                [
+                    'verify' => $config['certificate'],
+                    'cert' => $config['certificate'],
+                    'ssl_key' => $config['certificateKey'],
+                    'query' => $filters,
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => "Bearer {$config['token']}"
                     ]
-                );
+                ]
+            );
 
-                return json_decode($response->getBody()->getContents());
-            } catch (ClientException $e) {
-                $statusCode = $e->getResponse()->getStatusCode();
-                $response = $e->getResponse()->getReasonPhrase();
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $response = $e->getResponse()->getReasonPhrase();
 
-                return ['error' => $response, 'statusCode' => $statusCode];
-            } catch (\Exception $e) {
-                throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
-            }
-        }else{
-            return $this->ok;
+            return ['error' => $response, 'statusCode' => $statusCode];
+        } catch (\Exception $e) {
+            throw new Exception("Falha ao consultar coleção de boletos: {$e->getMessage()}");
         }
     }
+
+    public function incluirBoletoCobranca($config, $dadosBoleto)
+    {
+        try {
+            $response = $this->client->request(
+                'POST',
+                '/cobranca/v2/boletos',
+                [
+                    'verify' => $config['certificate'],
+                    'cert' => $config['certificate'],
+                    'ssl_key' => $config['certificateKey'],
+                    'body' => json_encode($dadosBoleto),
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-Type' => 'application/json',
+                        'Authorization' => "Bearer {$config['token']}"
+                    ]
+                ]
+            );
+            return json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $response = $e->getResponse()->getReasonPhrase();
+            $body = $e->getResponse()->getBody();
+            $Version = $e->getResponse()->getProtocolVersion();
+            $message = Message::toString($e->getResponse());
+            return ['error' => $response, 'message' => $message, 'statusCode' => $statusCode, 'body' => $body, 'Version' => $Version, 'seek' => $body->seek(0), 'read' => $body->read(0)];
+        } catch (\Exception $e) {
+            throw new Exception("Falha ao incluir o boleto: {$e->getMessage()}");
+        }
+    }
+
+    ##############################################
+    ######## WEBHOOK #############################
+    ##############################################
 }
