@@ -16,26 +16,24 @@ Clique em conta digital e selecione Gestão de aplicações<br>
 Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informar o local que estão os certificados e informar client_id e client_secret
 
 ```php
-    session_start();
     require '../../../vendor/autoload.php';
 
     use Divulgueregional\ApiInterV2\InterBanking;
 
-    $dd = new stdClass;
-    $dd->certificate = '../cert/Inter_API_Certificado.crt';//local do certificado crt
-    $dd->certificateKey = '../cert/Inter_API_Chave.key';//local do certificado key
-    $dd->client_id = '';//seu client_id
-    $dd->client_secret = '';//client_secret
+    $config = [
+        'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
+        'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
+        'client_id' => '',//seu client_id
+        'client_secret' => '',//client_secret
+    ];
 
     try {
-        $bankingInter = new InterBanking($dd);
-
+        $bankingInter = new InterBanking();
         $token = $bankingInter->getToken();
         print_r($token);
     } catch (\Exception $e) {
         echo $e->getMessage();
-    }
-    
+    }    
 ```
 
 ## Observação
