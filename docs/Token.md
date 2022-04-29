@@ -9,8 +9,8 @@ Faça login no site do Banco do Inter.<br>
 Clique em conta digital e selecione Gestão de aplicações<br>
 
 - Criar aplicação
-- baixe o certificado em seu computador (são 2)
-- Clique na seta  esquerda ao lado do nome da aplicação e pegue ClientId e ClientSecret.
+- baixe o certificado que vai estar zipado e descompacte para obter o certificado .crt e .key
+- Clique na seta  esquerda ao lado do nome da aplicação e pegue ClientId e ClientSecret
 
 ## Geração do Token
 Obter token oAuth
@@ -39,5 +39,5 @@ Obter token oAuth
 
 ## Observação
 Armazene e gerencie o token da forma que achar mais conveniente para você<br>
-Pois para poder usar os métodos da API vai precisar desse token<br>
+Pois para poder usar as funcionalidades da API vai precisar desse token<br>
 O Token tem uma válidade de 1 hora após ele ser gerado.
