@@ -2,7 +2,7 @@
 
 ## Introdução
 
-Projeto completo utilizando comunicação e funcionalidades fornecidas pela API do Banco Inter. Essa biblioteca pode ser facilmente integradas ao seu software e/ou ERP.
+Projeto completo utilizando comunicação e funcionalidades fornecidas pela API do Banco Inter. Essa biblioteca pode ser facilmente integrada ao seu software e/ou ERP.
 
 ## Como usar:
 <b>Instalação: </b>
