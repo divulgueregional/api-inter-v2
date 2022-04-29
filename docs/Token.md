@@ -79,29 +79,39 @@ if($controlToken=='gerarToken'){
 function controlToken()
 {
     date_default_timezone_set('America/Sao_Paulo');
-    if ($_SESSION['tokenInter']['token'] != '') {
-        //token gerado, conferir validade
-        if ($_SESSION['tokenInter']['data'] == date('Y-m-d')) {
-            //data válida, verificar horário
-            $hora_decorridas = gmdate('H:i:s', strtotime(date('H:i:s')) - strtotime($_SESSION['tokenInter']['hora']));
-            $hora = explode(":", $hora_decorridas);
-            if ($hora[0] == '00') {
-                if ($hora[1] < '58') {
-                    return $_SESSION['tokenInter']['token'];
+    if(isset($_SESSION['tokenInter']['token']))
+    {
+        if ($_SESSION['tokenInter']['token'] != '') 
+        {
+            //token gerado, conferir validade
+            if ($_SESSION['tokenInter']['data'] == date('Y-m-d')) 
+            {
+                //data válida, verificar horário
+                $hora_decorridas = gmdate('H:i:s', strtotime(date('H:i:s')) - strtotime($_SESSION['tokenInter']['hora']));
+                $hora_min = explode(":", $hora_decorridas);
+                if ($hora_min[0] == '00') 
+                {
+                    if ($hora_min[1] < '58') 
+                    {
+                        return $_SESSION['tokenInter']['token'];
+                    } else {
+                        //passou de 56 min, gerar novo token
+                        return 'gerarToken';
+                    }
                 } else {
-                    //passou de 56 min, gerar novo token
+                    //passou de 1 hora, gerar token
                     return 'gerarToken';
                 }
             } else {
-                //passou de 1 hora, gerar token
+                //data inválida, gerar token
                 return 'gerarToken';
             }
         } else {
-            //data inválida, gerar token
             return 'gerarToken';
         }
     } else {
         return 'gerarToken';
     }
 }
+
 ```
