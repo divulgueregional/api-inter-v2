@@ -34,6 +34,6 @@ Francisco Alex (Orientador)
 
 <!-- ## Comunidade: -->
 ## Facilitou sua vida?
-Se o projeto o ajudou em uma tarefa complexa se tornar mais simples e se gostaria de contribuir com uma pequena doação ao autor, faça pelo PIX abaixo<br><hr>
+Se o projeto o ajudou em uma tarefa excencial a sua aplicaçã de uma forma simples e se gostaria de contribuir com uma pequena doação ao autor, faça pelo PIX abaixo<br><hr>
 
 Chave Pix CNPJ: 13236787000137
