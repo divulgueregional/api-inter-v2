@@ -12,8 +12,9 @@ Gere o token para poder utilizar as funcionalidades da API Banking e API cobran�
 ## API Banking
 Estas funcionalidades incluem até o momento:
 
-- Consultar extrato.
-- Consultar saldo.
+- Consultar extrato
+- Consultar extrato em pdf
+- Consultar saldo
 ## API Cobranças
 Suas funcionalidades são:
 
