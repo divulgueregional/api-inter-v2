@@ -2,10 +2,10 @@
 
 ## Introdução
 
-Projeto completo utilizando comunicação e funcionalidades fornecidas pela API do Banco Inter. Essa aplicação pode ser facilmente integradas ao seu produto e até mesmo ao seu ERP.
+Projeto completo utilizando comunicação e funcionalidades fornecidas pela API do Banco Inter. Essa aplicação pode ser facilmente integradas ao seu software e/ou ERP.
 
 ## Como usar:
-<b>>Instalação</b>
+<b>Instalação: </b>
 Para utilizar a biblioteca através do composer:
 ```php
 composer require divulgueregional/api-inter-v2
@@ -24,9 +24,6 @@ Acesse a pasta docs e leia o README.md
 - Cancelar boleto
 - Consultar extrato.
 - Consultar saldo.
-
-## Documentação:
-Acesse a pasta docs e leia o README.md
 
 ## Créditos:
 Carlos Roseno Matos (developer)<br>

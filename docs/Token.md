@@ -13,7 +13,7 @@ Clique em conta digital e selecione Gestão de aplicações<br>
 - Clique na seta  esquerda ao lado do nome da aplicação e pegue ClientId e ClientSecret.
 
 ## Geração do Token
-Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informar o local que estão os certificados e informar client_id e client_secret
+O token gerado tem uma validade de 1 hora. Você deve gerenciar e controlar a sua forma o seu armazenamento e validade.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -25,11 +25,11 @@ Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informa
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
     ];
 
+    $client_id = '',//seu client_id
+    $client_secret = '',//client_secret
     try {
         $bankingInter = new InterBanking($config);
         
-        $client_id = '',//seu client_id
-        $client_secret = '',//client_secret
         $token = $bankingInter->getToken($client_id, $client_secret);
         print_r($token);
     } catch (\Exception $e) {

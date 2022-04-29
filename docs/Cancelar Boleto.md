@@ -1,7 +1,6 @@
 # CANCELAR BOLETO-INTER
 
 ## Cancelar Boleto
-Cancelar o boleto<br>
 Necessita informar o nossoNumero.
 
 ```php

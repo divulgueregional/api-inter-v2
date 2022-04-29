@@ -1,8 +1,8 @@
-# api-inter
+# API-INTER
 
 ## Introdução
 
-Essa documentação visa auxiliar a comunicação com a API do Banco Inter usando os padrões estabelecidos pelo banco, disponibilizando um conjunto de funcionalidade que permitem acesso seguro a dados e serviços bancários. Essa API pode ser facilmente integradas ao seu produto e até mesmo ao seu ERP.
+Essa documentação visa auxiliar a comunicação com a API do Banco Inter usando os padrões estabelecidos pelo banco, disponibilizando um conjunto de funcionalidade que permitem acesso seguro a dados e serviços bancários. Essa API pode ser facilmente integradas ao seu software e/ou ERP.
 
 ## PRIMEIRO PASSSO
 Acesse sua conta no site do Banco do Inter e gere uma aplicação para obter o certificado crt e key.<br>
