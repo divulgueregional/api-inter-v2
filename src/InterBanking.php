@@ -82,7 +82,9 @@ class InterBanking
                 $options
             );
 
-            return (array) json_decode($response->getBody()->getContents());
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
@@ -104,7 +106,9 @@ class InterBanking
                 $options
             );
 
-            return (array) json_decode($response->getBody()->getContents());
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
@@ -126,7 +130,9 @@ class InterBanking
                 $options
             );
 
-            return (array) json_decode($response->getBody()->getContents());
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
@@ -154,7 +160,9 @@ class InterBanking
                 $options
             );
 
-            return (array) json_decode($response->getBody()->getContents());
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
@@ -174,7 +182,9 @@ class InterBanking
                 $options
             );
 
-            return json_decode($response->getBody()->getContents());
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
@@ -196,7 +206,9 @@ class InterBanking
                 $options
             );
 
-            return (array) json_decode($response->getBody()->getContents());
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
@@ -217,7 +229,9 @@ class InterBanking
                 $options
             );
 
-            return (array) json_decode($response->getBody()->getContents());
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
@@ -238,7 +252,9 @@ class InterBanking
                 $options
             );
 
-            return (array) json_decode($response->getBody()->getContents());
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
@@ -259,7 +275,9 @@ class InterBanking
                 '/cobranca/v2/boletos',
                 $options
             );
-            return (array) json_decode($response->getBody()->getContents());
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
@@ -271,7 +289,72 @@ class InterBanking
     ##############################################
     ######## WEBHOOK #############################
     ##############################################
+    public function criarWebhook(string $webhookUrl)
+    {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode(['webhookUrl' => $webhookUrl]);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'PUT',
+                "/cobranca/v2/boletos/webhook",
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao criar Webhook: {$response}"];
+        }
+    }
 
+    public function obterWebhookCadastrado()
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v2/boletos/webhook",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter Webhook Cadastrado: {$response}"];
+        }
+    }
+
+    public function excluirWebhook()
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'DELETE',
+                "/cobranca/v2/boletos/webhook",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao excluir Webhook: {$response}"];
+        }
+    }
 
     ##############################################
     ######## FERRAMENTAS #########################

@@ -2,7 +2,7 @@
 
 ## Introdução
 
-Projeto completo utilizando comunicação e funcionalidades fornecidas pela API do Banco Inter. Essa aplicação pode ser facilmente integradas ao seu software e/ou ERP.
+Projeto completo utilizando comunicação e funcionalidades fornecidas pela API do Banco Inter. Essa biblioteca pode ser facilmente integradas ao seu software e/ou ERP.
 
 ## Como usar:
 <b>Instalação: </b>
@@ -14,7 +14,7 @@ composer require divulgueregional/api-inter-v2
 ## Documentação:
 Acesse a pasta docs e leia o README.md
 
-## O QUE ESTÁ PRONTO
+## O QUE VOCÊ PODE UTILIZAR
 - Gerar o token
 - Incluir boleto de cobrança
 - Recuperar coleção de boletos
@@ -24,13 +24,16 @@ Acesse a pasta docs e leia o README.md
 - Cancelar boleto
 - Consultar extrato.
 - Consultar saldo.
+- Criar webhook
+- Obter webhook cadastrado
+- Excluir webhook
 
 ## Créditos:
 Carlos Roseno Matos (developer)<br>
-Francisco (Orientador)
+Francisco Alex (Orientador)
 
 <!-- ## Comunidade: -->
-<!-- Essa é a minha primeira API em um processo de aprendizagem e espero que ajude outras pessoas a implementarem a sua geração de boletos.<br>
-Caso queira contribuir com a melhoria, fique a vontade para sugerir modificações.<br>
-É totalmente free, mas se gostaria de contribuir com uma doação ao autor pelo PIX abaixo<br>
-13236787000137 -->
+## Facilitou sua vida?
+Se o projeto o ajudou em uma tarefa complexa se tornar mais simples e se gostaria de contribuir com uma pequena doação ao autor, faça pelo PIX abaixo<br><hr>
+
+Chave Pix CNPJ: 13236787000137
