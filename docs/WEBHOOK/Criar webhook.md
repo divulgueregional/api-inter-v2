@@ -1,7 +1,7 @@
 # CRIAR WEBHOOK-INTER
 
 ## Como criar o webhook
-Crie um arquivo para receber as notificações quando houver um evento, após informe a url desse arquivo para criar o webhook
+Crie um arquivo para receber as notificações, após informe a url desse arquivo para criar o webhook
 
 ## criando o webhook
 Você só pode ter 1 webhook
