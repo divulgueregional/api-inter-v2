@@ -23,6 +23,7 @@ Acesse a pasta docs e leia o README.md
 - Recuperar boleto em PDF
 - Cancelar boleto
 - Consultar extrato.
+- Recuperar extrato em PDF
 - Consultar saldo.
 - Criar webhook
 - Obter webhook cadastrado
