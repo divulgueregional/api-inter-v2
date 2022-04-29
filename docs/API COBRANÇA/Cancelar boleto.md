@@ -26,3 +26,4 @@ Necessita informar o nossoNumero.
         echo $e->getMessage();
     }
 ```
+Status: 204 - Sucesso, boleto cancelado
