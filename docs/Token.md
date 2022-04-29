@@ -13,7 +13,7 @@ Clique em conta digital e selecione Gestão de aplicações<br>
 - Clique na seta  esquerda ao lado do nome da aplicação e pegue ClientId e ClientSecret.
 
 ## Geração do Token
-O token gerado tem uma validade de 1 hora. Você deve gerenciar e controlar a sua forma o seu armazenamento e validade.
+Obter token oAuth
 
 ```php
     require '../../../vendor/autoload.php';
