@@ -1,8 +1,7 @@
-# BOLETO DETALHADO-INTER
+# INCLUIR BOLETO COBRANÇA-INTER
 
-## Consultar boleto
-Busca todos os dados do boleto<br>
-Necessita informar o nossoNumero.
+## Incluir Boleto de Cobrança
+O boleto incluído estará disponível para consulta e pagamento, após um tempo apróximado de 5 minutos da sua inclusão. Esse tempo é necessário para o registro do boleto na CIP.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -10,31 +9,31 @@ Necessita informar o nossoNumero.
     use Divulgueregional\ApiInterV2\InterBanking;
 
     $config = [
-        'certificate' => '../cert/Inter_API_Certificado.crt',
-        'certificateKey' => '../cert/Inter_API_Chave.key',
-        'token' => 'b32e22ea-402d-4b71-9dec-43697b2e9a2d',//informe o token
+        'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
+        'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
     ];
+
     $dadosBoleto = [
-        "seuNumero" => "85401",
-        "valorNominal" => 50,
+        "seuNumero" => "85401",//obrigatório
+        "valorNominal" => 50,//obrigatório
         "valorAbatimento" => 0,
         "dataEmissao" => "2022-04-28",
-        "dataVencimento" => "2022-07-15",
-        "numDiasAgenda" => 30,
+        "dataVencimento" => "2022-07-15",//obrigatório
+        "numDiasAgenda" => 30,//obrigatório
         "pagador" => [
-            "cpfCnpj" => "55309496068",
-            "nome" => "CARLOS ROSENO MATOS",
+            "cpfCnpj" => "99999999999",//obrigatório
+            "nome" => "Nome do Pagador",//obrigatório
             "email" => "",
             "telefone" => "",
-            "cep" => "95097660",
-            "numero" => "927",
+            "cep" => "95097000",//obrigatório
+            "numero" => "000",
             "complemento" => "",
             "bairro" => "Rio Branco",
-            "cidade" => "Caxias do Sul",
-            "uf" => "RS",
-            "endereco" => "Rua Comendador Silvio Toigo",
+            "cidade" => "Caxias do Sul",//obrigatório
+            "uf" => "RS",//obrigatório
+            "endereco" => "Endereço do pagador",//obrigatório
             "ddd" => "",
-            "tipoPessoa" => "FISICA"
+            "tipoPessoa" => "FISICA"//obrigatório
         ],
         "mensagem" => [
             "linha1" => "Teste de evio 1",
@@ -75,14 +74,19 @@ Necessita informar o nossoNumero.
         ]
     ];
 
+    $token = '';//seu token
     try {
-        $bankingInter = new InterBanking();
+        $bankingInter = new InterBanking($config);
+        $bankingInter->setToken($token);
 
         echo "<pre>";
-        $incluirBoletoCobranca = $bankingInter->incluirBoletoCobranca($config, $dadosBoleto);
+        $incluirBoletoCobranca = $bankingInter->incluirBoletoCobranca($dadosBoleto);
         // echo $incluirBoletoCobranca->nossoNumero;
         print_r($incluirBoletoCobranca);
     } catch (\Exception $e) {
         echo $e->getMessage();
     }
 ```
+
+## ATENÇÃO
+Todos os parâmetros como os dados do pagador, devem ser validados por você para não der problema na geração do boleto. A cobrança é cadastrada no banco central e aparecerá no DDA dos sacados. Os dadosBoleto você deverá informar com os seus dados, revise cada parâmetro e coloque a informação corretamente.

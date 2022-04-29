@@ -10,18 +10,17 @@ Necessita informar o nossoNumero.
     use Divulgueregional\ApiInterV2\InterBanking;
 
     $config = [
-        'certificate' => '../cert/Inter_API_Certificado.crt',
-        'certificateKey' => '../cert/Inter_API_Chave.key',
-        'token' => '8a5f79d1-30bb-4099-8f72-299f549c6a90',//informe o token
-    ];
-    $filters = [
-        'nossoNumero' => '00811230921',//nossoNumero - obrigatorio
+        'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
+        'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
     ];
 
+    $token = '';//seu token
+    $nossoNumero = '';//informe o nossoNumero
     try {
-        $bankingInter = new InterBanking();
+        $bankingInter = new InterBanking($config);
+        $bankingInter->setToken($token);
 
-        $boletoPDF = $bankingInter->boletoPDF($config, $filters);
+        $boletoPDF = $bankingInter->boletoPDF($nossoNumero);
         // print_r($boletoPDF);
         // echo $boletoPDF->pdf;
         $pdf = base64_decode($boletoPDF->pdf);

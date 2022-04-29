@@ -23,13 +23,14 @@ Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informa
     $config = [
         'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
-        'client_id' => '',//seu client_id
-        'client_secret' => '',//client_secret
     ];
 
     try {
-        $bankingInter = new InterBanking();
-        $token = $bankingInter->getToken($config);
+        $bankingInter = new InterBanking($config);
+        
+        $client_id = '',//seu client_id
+        $client_secret = '',//client_secret
+        $token = $bankingInter->getToken($client_id, $client_secret);
         print_r($token);
     } catch (\Exception $e) {
         echo $e->getMessage();
@@ -38,5 +39,5 @@ Essa API gera o token e gerencia o tempo de uso do token, apenas precisa informa
 
 ## Observação
 Armazene e gerencie o token da forma que achar mais conveniente para você<br>
-Pois para poder usar os recursos da API vai precisar desse token<br>
+Pois para poder usar os métodos da API vai precisar desse token<br>
 O Token tem uma válidade de 1 hora após ele ser gerado.

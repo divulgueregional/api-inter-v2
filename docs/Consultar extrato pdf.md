@@ -1,8 +1,7 @@
-# CANCELAR BOLETO-INTER
+# CONSULTAR EXTRATO PDF-INTER
 
-## Cancelar Boleto
-Cancelar o boleto<br>
-Necessita informar o nossoNumero.
+## Consultar Extrato PDF
+Consultar extrato da conta e mostrar em PDF.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -14,15 +13,23 @@ Necessita informar o nossoNumero.
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
     ];
 
+    $filters = [
+        'dataInicio' => '2022-04-20',//obrigatorio
+        'dataFim' =>  '2022-04-28',//obrigatorio
+    ];
+
     $token = '';//seu token
-    $nossoNumero = '';
-    $motivo = 'ACERTOS';//ACERTOS - APEDIDODOCLIENTE - DEVOLUCAO - PAGODIRETOAOCLIENTE - SUBSTITUICAO
     try {
         $bankingInter = new InterBanking($config);
         $bankingInter->setToken($token);
 
-        $cancelarBoleto = $bankingInter->cancelarBoleto($nossoNumero, $motivo);
-        print_r($cancelarBoleto);
+        echo "<pre>";
+        $extratosPDF = $bankingInter->checkExtratoPDF($filters);
+        // print_r($extratosPDF);
+        $pdf = base64_decode($extratosPDF['pdf']);
+
+        header('Content-Type: application/pdf');
+        echo $pdf;
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

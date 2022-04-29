@@ -2,23 +2,27 @@
 
 ## Introdução
 
-Essa API destinado à comunicação com a API do Banco Inter que é um conjunto de rotinas e padrões estabelecidos por um software para a utilização das suas funcionalidade que permitem acesso seguro a dados e serviços bancários. Essa API pode ser facilmente integradas ao seu produto e até mesmo ao seu ERP.
+Essa documentação visa auxiliar a comunicação com a API do Banco Inter usando os padrões estabelecidos pelo banco, disponibilizando um conjunto de funcionalidade que permitem acesso seguro a dados e serviços bancários. Essa API pode ser facilmente integradas ao seu produto e até mesmo ao seu ERP.
 
+## PRIMEIRO PASSSO
+Acesse sua conta no site do Banco do Inter e gere uma aplicação para obter o certificado crt e key.<br>
+Após gerar o certificado baixe ele e pegue o client_id e client_secret.<br>
+Gere o token para poder utilizar as funcionalidades da API cobranças e API Banking.
 ## API Cobranças
 Suas funcionalidades são:
 
-- Emissão de boletos.
-- Cancelamento de boletos.
-- Consulta de boletos.
-- Exportação de boleto para PDF
+- Incluir boleto de cobrança.
+- Recuperar coleção de boletos
+- Recuperar sumário de boletos
+- Recuperar boleto detalhado
+- Recuperar boleto em PDF
+- Cancelar boleto
 
 ## API Banking
 Estas funcionalidades incluem até o momento:
 
-- Consulta de saldo.
-- Consulta de extrato.
-- Consulta de boletos.
-- Exportação de extrato para PDF
+- Consultar extrato.
+- Consultar saldo.
 
 ## Webhooks
-A integração via webhook oferece a possibilidade de o Inter enviar ao sistema do parceiro atualizações referentes aos serviços utilizados, em tempo real, tornando esta troca de informações mais segura, ágil e eficaz.
+A integração via webhook oferece a possibilidade de o Inter enviar ao sistema do parceiro atualizações referentes aos serviços utilizados, em tempo real, tornando esta troca de informações mais segura, ágil e eficaz.(Em análise)

@@ -1,7 +1,7 @@
-# CANCELAR BOLETO-INTER
+# BOLETO DETALHADO-INTER
 
-## Cancelar Boleto
-Cancelar o boleto<br>
+## Consultar boleto
+Busca todos os dados do boleto<br>
 Necessita informar o nossoNumero.
 
 ```php
@@ -15,14 +15,14 @@ Necessita informar o nossoNumero.
     ];
 
     $token = '';//seu token
-    $nossoNumero = '';
-    $motivo = 'ACERTOS';//ACERTOS - APEDIDODOCLIENTE - DEVOLUCAO - PAGODIRETOAOCLIENTE - SUBSTITUICAO
+    $nossoNumero = '';//informe o nossoNumero
     try {
         $bankingInter = new InterBanking($config);
         $bankingInter->setToken($token);
 
-        $cancelarBoleto = $bankingInter->cancelarBoleto($nossoNumero, $motivo);
-        print_r($cancelarBoleto);
+        echo "<pre>";
+        $boletoDetalhado = $bankingInter->boletoDetalhado($nossoNumero);
+        print_r($boletoDetalhado);
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

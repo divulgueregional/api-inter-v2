@@ -9,10 +9,10 @@ Sumário de boletos traz o resumo dos boletos de acordo com os de filtros inform
     use Divulgueregional\ApiInterV2\InterBanking;
 
     $config = [
-        'certificate' => '../cert/Inter_API_Certificado.crt',
-        'certificateKey' => '../cert/Inter_API_Chave.key',
-        'token' => 'b32e22ea-402d-4b71-9dec-43697b2e9a2d',//informe o token
+        'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
+        'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
     ];
+
     $filters = [
         'dataInicial' => '2022-04-01',//obrigatório
         'dataFinal' => '2022-04-28',//obrigatório
@@ -24,10 +24,12 @@ Sumário de boletos traz o resumo dos boletos de acordo com os de filtros inform
         'nossoNumero' => '',
     ];
 
+    $token = '';//seu token
     try {
-        $bankingInter = new InterBanking();
+        $bankingInter = new InterBanking($config);
+        $bankingInter->setToken($token);
 
-        $sumarioBoletos = $bankingInter->sumarioBoletos($config, $filters);
+        $sumarioBoletos = $bankingInter->sumarioBoletos($filters);
         print_r($sumarioBoletos);
     } catch (\Exception $e) {
         echo $e->getMessage();
