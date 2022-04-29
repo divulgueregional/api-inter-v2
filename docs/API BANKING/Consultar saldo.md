@@ -14,7 +14,7 @@ Para trazer o saldo da conta
     ];
 
     $filters = [
-        'dataSaldo' => '',//YY-MM-DD caso não informar traz o saldo do dia
+        'dataSaldo' => '',//YYYY-MM-DD caso não informar traz o saldo do dia
     ];
 
     $token = '';//seu token
