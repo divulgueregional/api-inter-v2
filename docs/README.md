@@ -7,7 +7,7 @@ Essa documentação visa auxiliar a comunicação com a API do Banco Inter usand
 ## PRIMEIRO PASSSO
 Acesse sua conta no site do Banco do Inter e gere uma aplicação para obter o certificado crt e key.<br>
 Após gerar o certificado baixe ele e pegue o client_id e client_secret.<br>
-Gere o token para poder utilizar as funcionalidades da API cobranças e API Banking.
+Gere o token para poder utilizar as funcionalidades da API Banking e API cobranças.
 
 ## API Banking
 Estas funcionalidades incluem até o momento:
