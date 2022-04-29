@@ -130,7 +130,8 @@ class InterBanking
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
-            throw new Exception("Falha ao consultar o extrato: {$e->getMessage()}");
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar Extrato em PDF: {$response}"];
         }
     }
     ##############################################
@@ -157,7 +158,8 @@ class InterBanking
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
-            throw new Exception("Falha ao consultar boleto detalhado: {$e->getMessage()}");
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar boleto Detalhado: {$response}"];
         }
     }
 
@@ -176,7 +178,8 @@ class InterBanking
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
-            throw new Exception("Falha ao consultar pdf do boleto: {$e->getMessage()}");
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar boleto em PDF: {$response}"];
         }
     }
 
@@ -197,7 +200,8 @@ class InterBanking
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
-            throw new Exception("Falha ao cancelar o boleto: {$e->getMessage()}");
+            $response = $e->getMessage();
+            return ['error' => "Falha ao cancelar Boleto: {$response}"];
         }
     }
 
@@ -259,7 +263,8 @@ class InterBanking
         } catch (ClientException $e) {
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
-            throw new Exception("Falha ao incluir o boleto: {$e->getMessage()}");
+            $response = $e->getMessage();
+            return ['error' => "Falha ao incluir Boleto Cobranca: {$response}"];
         }
     }
 
