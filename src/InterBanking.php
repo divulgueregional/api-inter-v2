@@ -9,51 +9,58 @@ use GuzzleHttp\Psr7\Message;
 
 class InterBanking
 {
-    protected $certificate;
-    protected $certificateKey;
     protected $token;
-    protected $client;
+    protected $optionsRequest = [];
 
-    function __construct()
+    private $client;
+    function __construct(array $config)
     {
         $this->client = new Client([
             'base_uri' => 'https://cdpj.partners.bancointer.com.br',
         ]);
+
+        $this->optionsRequest = [
+            'headers' => [
+                'Accept' => 'application/json'
+            ],
+            'cert' => $config['certificate'],
+            'verify' => $config['certificate'],
+            'ssl_key' => $config['certificateKey'],
+        ];
     }
 
     ##############################################
     ######## TOKEN ###############################
     ##############################################
-    public function getToken($config)
+    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write')
     {
+        $options = $this->optionsRequest;
+        $options['form_params'] = [
+            'client_id' => $client_id,
+            'client_secret' => $client_secret,
+            'grant_type' => 'client_credentials',
+            'scope' => $scope
+        ];
+
         try {
             $response = $this->client->request(
                 'POST',
                 '/oauth/v2/token',
-                [
-                    'headers' => [
-                        'Accept' => 'application/json'
-                    ],
-                    'cert' => $config['certificate'],
-                    'ssl_key' => $config['certificateKey'],
-                    'form_params' => [
-                        'client_id' => $config['client_id'],
-                        'client_secret' => $config['client_secret'],
-                        'grant_type' => 'client_credentials',
-                        'scope' => 'extrato.read boleto-cobranca.read boleto-cobranca.write'
-                    ]
-                ]
+                $options
             );
 
-            $retorno = json_decode($response->getBody()->getContents());
-            if (isset($retorno->access_token)) {
-                $this->token = $retorno->access_token;
-            }
-
-            return $this->token;
+            return (array) json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
         } catch (\Exception $e) {
-            new Exception("Falha ao gerar Token: {$e->getMessage()}");
+            $response = $e->getMessage();
+            return ['error' => $response];
         }
+    }
+
+    public function setToken(string $token)
+    {
+        $this->token = $token;
     }
     ##############################################
     ######## FIM TOKEN ###########################
@@ -62,58 +69,66 @@ class InterBanking
     ##############################################
     ######## BANKING #############################
     ##############################################
-    public function checkSaldo($config, $filters)
+    public function checkSaldo($filters)
     {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
         try {
             $response = $this->client->request(
                 'GET',
                 "/banking/v2/saldo",
-                [
-                    'verify' => $config['certificate'],
-                    'cert' => $config['certificate'],
-                    'ssl_key' => $config['certificateKey'],
-                    'query' => $filters,
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$config['token']}"
-                    ]
-                ]
+                $options
             );
-            
-            return json_decode($response->getBody()->getContents());
+
+            return (array) json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $response = $e->getResponse()->getReasonPhrase();
-            return ['error' => $response, 'statusCode' => $statusCode];
+            return $this->parseResultClient($e);
         } catch (\Exception $e) {
-            throw new Exception("Falha ao consultar saldo: {$e->getMessage()}");
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar saldo: {$response}"];
         }
     }
 
-    public function checkExtrato($config, $filters)
+    public function checkExtrato($filters)
     {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
         try {
             $response = $this->client->request(
                 'GET',
                 "/banking/v2/extrato",
-                [
-                    'verify' => $config['certificate'],
-                    'cert' => $config['certificate'],
-                    'ssl_key' => $config['certificateKey'],
-                    'query' => $filters,
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$config['token']}"
-                    ]
-                ]
+                $options
             );
 
-            return json_decode($response->getBody()->getContents());
+            return (array) json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $response = $e->getResponse()->getReasonPhrase();
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao consultar o extrato: {$response}"];
+        }
+    }
 
-            return ['error' => $response, 'statusCode' => $statusCode];
+    public function checkExtratoPDF($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/extrato/exportar",
+                $options
+            );
+
+            return (array) json_decode($response->getBody()->getContents());
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
         } catch (\Exception $e) {
             throw new Exception("Falha ao consultar o extrato: {$e->getMessage()}");
         }
@@ -126,176 +141,123 @@ class InterBanking
     ##############################################
     ######## COBRANÇAS ###########################
     ##############################################
-    public function boletoDetalhado($config, $filters)
+    public function boletoDetalhado(string $nossoNumero)
     {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        
         try {
             $response = $this->client->request(
                 'GET',
-                "/cobranca/v2/boletos/{$filters['nossoNumero']}",
-                [
-                    'verify' => $config['certificate'],
-                    'cert' => $config['certificate'],
-                    'ssl_key' => $config['certificateKey'],
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$config['token']}"
-                    ]
-                ]
+                "/cobranca/v2/boletos/{$nossoNumero}",
+                $options
             );
 
-            return json_decode($response->getBody()->getContents());
+            return (array) json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $response = $e->getResponse()->getReasonPhrase();
-
-            return ['error' => $response, 'statusCode' => $statusCode];
+            return $this->parseResultClient($e);
         } catch (\Exception $e) {
             throw new Exception("Falha ao consultar boleto detalhado: {$e->getMessage()}");
         }
     }
 
-    public function boletoPDF($config, $filters)
+    public function boletoPDF(string $nossoNumero)
     {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
             $response = $this->client->request(
                 'GET',
-                "/cobranca/v2/boletos/{$filters['nossoNumero']}/pdf",
-                [
-                    'verify' => $config['certificate'],
-                    'cert' => $config['certificate'],
-                    'ssl_key' => $config['certificateKey'],
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$config['token']}"
-                    ]
-                ]
+                "/cobranca/v2/boletos/{$nossoNumero}/pdf",
+                $options
             );
 
             return json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $response = $e->getResponse()->getReasonPhrase();
-
-            return ['error' => $response, 'statusCode' => $statusCode];
+            return $this->parseResultClient($e);
         } catch (\Exception $e) {
             throw new Exception("Falha ao consultar pdf do boleto: {$e->getMessage()}");
         }
     }
 
-    public function cancelarBoleto($config, $filters)
+    public function cancelarBoleto(string $nossoNumero, string $motivo)
     {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode(['motivoCancelamento' => $motivo]);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
             $response = $this->client->request(
                 'POST',
-                "/cobranca/v2/boletos/{$config['nossoNumero']}/cancelar",
-                [
-                    'verify' => $config['certificate'],
-                    'cert' => $config['certificate'],
-                    'ssl_key' => $config['certificateKey'],
-                    'body' => json_encode($filters),
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Content-Type' => 'application/json',
-                        'Authorization' => "Bearer {$config['token']}"
-                    ]
-                ]
+                "/cobranca/v2/boletos/{$nossoNumero}/cancelar",
+                $options
             );
 
-            return json_decode($response->getBody()->getContents());
+            return (array) json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $response = $e->getResponse()->getReasonPhrase();
-
-            return ['error' => $response, 'statusCode' => $statusCode];
+            return $this->parseResultClient($e);
         } catch (\Exception $e) {
             throw new Exception("Falha ao cancelar o boleto: {$e->getMessage()}");
         }
     }
 
-    public function sumarioBoletos($config, $filters)
+    public function sumarioBoletos($filters)
     {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
         try {
             $response = $this->client->request(
                 'GET',
                 "/cobranca/v2/boletos/sumario",
-                [
-                    'verify' => $config['certificate'],
-                    'cert' => $config['certificate'],
-                    'ssl_key' => $config['certificateKey'],
-                    'query' => $filters,
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$config['token']}"
-                    ]
-                ]
+                $options
             );
 
-            return json_decode($response->getBody()->getContents());
+            return (array) json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $response = $e->getResponse()->getReasonPhrase();
-
-            return ['error' => $response, 'statusCode' => $statusCode];
+            return $this->parseResultClient($e);
         } catch (\Exception $e) {
-            throw new Exception("Falha ao consultar o sumário: {$e->getMessage()}");
+            $response = $e->getMessage();
+            return ['error' => "Falha ao consultar o sumário: {$response}"];
         }
     }
 
-    public function colecaoBoletos($config, $filters)
+    public function colecaoBoletos($filters)
     {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
         try {
             $response = $this->client->request(
                 'GET',
                 "/cobranca/v2/boletos",
-                [
-                    'verify' => $config['certificate'],
-                    'cert' => $config['certificate'],
-                    'ssl_key' => $config['certificateKey'],
-                    'query' => $filters,
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Authorization' => "Bearer {$config['token']}"
-                    ]
-                ]
+                $options
             );
 
-            return json_decode($response->getBody()->getContents());
+            return (array) json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $response = $e->getResponse()->getReasonPhrase();
-
-            return ['error' => $response, 'statusCode' => $statusCode];
+            return $this->parseResultClient($e);
         } catch (\Exception $e) {
-            throw new Exception("Falha ao consultar coleção de boletos: {$e->getMessage()}");
+            $response = $e->getMessage();
+            return ['error' => "Falha ao consultar coleção de boletos: {$response}"];
         }
     }
 
-    public function incluirBoletoCobranca($config, $dadosBoleto)
+    public function incluirBoletoCobranca($dadosBoleto)
     {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode($dadosBoleto);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
             $response = $this->client->request(
                 'POST',
                 '/cobranca/v2/boletos',
-                [
-                    'verify' => $config['certificate'],
-                    'cert' => $config['certificate'],
-                    'ssl_key' => $config['certificateKey'],
-                    'body' => json_encode($dadosBoleto),
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Content-Type' => 'application/json',
-                        'Authorization' => "Bearer {$config['token']}"
-                    ]
-                ]
+                $options
             );
-            return json_decode($response->getBody()->getContents());
+            return (array) json_decode($response->getBody()->getContents());
         } catch (ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            $response = $e->getResponse()->getReasonPhrase();
-            $body = $e->getResponse()->getBody();
-            $Version = $e->getResponse()->getProtocolVersion();
-            $message = Message::toString($e->getResponse());
-            return ['error' => $response, 'message' => $message, 'statusCode' => $statusCode, 'body' => $body, 'Version' => $Version, 'seek' => $body->seek(0), 'read' => $body->read(0)];
+            return $this->parseResultClient($e);
         } catch (\Exception $e) {
             throw new Exception("Falha ao incluir o boleto: {$e->getMessage()}");
         }
@@ -304,4 +266,17 @@ class InterBanking
     ##############################################
     ######## WEBHOOK #############################
     ##############################################
+
+
+    ##############################################
+    ######## FERRAMENTAS #########################
+    ##############################################
+    private function parseResultClient($result)
+    {
+        $statusCode = $result->getResponse()->getStatusCode();
+        $response = $result->getResponse()->getReasonPhrase();
+        $body = $result->getResponse()->getBody()->getContents();
+
+        return ['error' => $body, 'response' => $response, 'statusCode' => $statusCode];
+    }
 }
