@@ -8,6 +8,12 @@ Essa documentação visa auxiliar a comunicação com a API do Banco Inter usand
 Acesse sua conta no site do Banco do Inter e gere uma aplicação para obter o certificado crt e key.<br>
 Após gerar o certificado baixe ele e pegue o client_id e client_secret.<br>
 Gere o token para poder utilizar as funcionalidades da API cobranças e API Banking.
+
+## API Banking
+Estas funcionalidades incluem até o momento:
+
+- Consultar extrato.
+- Consultar saldo.
 ## API Cobranças
 Suas funcionalidades são:
 
@@ -18,11 +24,6 @@ Suas funcionalidades são:
 - Recuperar boleto em PDF
 - Cancelar boleto
 
-## API Banking
-Estas funcionalidades incluem até o momento:
-
-- Consultar extrato.
-- Consultar saldo.
 
 ## Webhooks
 A integração via webhook oferece a possibilidade de o Inter enviar ao sistema do parceiro atualizações referentes aos serviços utilizados, em tempo real, tornando esta troca de informações mais segura, ágil e eficaz.(Em análise)
