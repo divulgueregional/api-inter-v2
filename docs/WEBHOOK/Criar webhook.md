@@ -1,7 +1,6 @@
 # CRIAR WEBHOOK-INTER
 
 ## Como criar o webhook
-Acompanhe em tempo real os eventos de pagamento ou cancelamento de uma cobrança, de um débito ou crédito em conta, da confirmação de pagamentos e muito mais<br>
 Crie um arquivo para receber as notificações quando houver um evento, após informe a url desse arquivo para criar o webhook
 
 ## criando o webhook
