@@ -45,4 +45,4 @@ Francisco Alex (Orientador)
 ## Facilitou sua vida?
 Se o projeto o ajudou em uma tarefa excencial a sua aplicação de uma forma simples e se gostaria de contribuir com uma pequena doação ao autor, faça pelo PIX abaixo<br><hr>
 
-Chave Pix CNPJ: roseno@divulgueregional.com.br
+Chave Pix E-MAIL: roseno@divulgueregional.com.br
