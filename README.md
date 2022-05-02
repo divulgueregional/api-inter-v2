@@ -10,6 +10,14 @@ Para utilizar a biblioteca através do composer:
 ```php
 composer require divulgueregional/api-inter-v2
 ```
+## Atualizar:
+```php
+composer update
+```
+<b>Ou pela última tag: </b>
+```php
+composer update divulgueregional/api-inter-v2 1.0.1
+```
 
 ## Documentação:
 Acesse a pasta docs e leia o README.md
