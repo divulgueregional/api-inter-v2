@@ -38,11 +38,11 @@ Acesse a pasta docs e leia o README.md
 - Excluir webhook
 
 ## Créditos:
-Carlos Roseno Matos (developer)<br>
+Roseno Matos (developer)<br>
 Francisco Alex (Orientador)
 
 <!-- ## Comunidade: -->
 ## Facilitou sua vida?
 Se o projeto o ajudou em uma tarefa excencial a sua aplicação de uma forma simples e se gostaria de contribuir com uma pequena doação ao autor, faça pelo PIX abaixo<br><hr>
 
-Chave Pix CNPJ: 13.236.787/0001-37
+Chave Pix CNPJ: roseno@divulgueregional.com.br
