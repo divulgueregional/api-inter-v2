@@ -48,7 +48,7 @@ Salve o arquivo em sua pasta e direciona o caminho:
         ];
     }
 ```
-Link original para fazer download do arquivo: https://curl.se/ca/cacert.pem
+Download do arquivo cacert.pem: https://curl.se/ca/cacert.pem
 
 ## OBSERVAÇÃO
 Caso fizer um composer update, deverá entrar e mudar novamente.
