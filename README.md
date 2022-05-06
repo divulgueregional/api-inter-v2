@@ -37,6 +37,9 @@ Acesse a pasta docs e leia o README.md
 - Obter webhook cadastrado
 - Excluir webhook
 
+## Contato Banco Inter:
+Poderá pedir o balanciamento dos boletos x transferências
++55 3003-4070 | 0800 940 0007
 ## Créditos:
 Roseno Matos (developer)<br>
 Francisco Alex (Orientador)
