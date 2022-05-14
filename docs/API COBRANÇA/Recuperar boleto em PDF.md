@@ -23,7 +23,7 @@ Necessita informar o nossoNumero.
         $boletoPDF = $bankingInter->boletoPDF($nossoNumero);
         // print_r($boletoPDF);
         // echo $boletoPDF->pdf;
-        $pdf = base64_decode($boletoPDF->pdf);
+        $pdf = base64_decode($boletoPDF['response']->pdf);
 
         header('Content-Type: application/pdf');
         echo $pdf;
