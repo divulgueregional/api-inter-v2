@@ -4,6 +4,9 @@
 Busca todos os dados do boleto<br>
 Necessita informar o nossoNumero.
 
+## Problema identificado
+Consultar 5 boletos por minutos ou se enviar 10 requisições o Banco Inter retorna (Token inválido.) nas demais requisições / consultas.
+
 ```php
     require '../../../vendor/autoload.php';
 

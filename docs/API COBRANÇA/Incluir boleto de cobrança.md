@@ -3,6 +3,9 @@
 ## Incluir Boleto de Cobrança
 O boleto incluído estará disponível para consulta e pagamento, após um tempo apróximado de 5 minutos da sua inclusão. Esse tempo é necessário para o registro do boleto na CIP.
 
+## Problemas identificado
+Existe uma limitação de requisição por segundos/minuto de 10 requisições, isto é um problema se tiver mais de 60 boletos para ser emitido em um unico lote, não consiguirá efetuar todas as emissões
+
 ```php
     require '../../../vendor/autoload.php';
 
