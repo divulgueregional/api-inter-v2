@@ -13,7 +13,7 @@ Consultar extrato da conta.
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
     ];
     
-    <b>CONSULTA MÁXIMA DE 90 DIAS</b>
+    //CONSULTA MÁXIMA DE 90 DIAS
     $filters = [
         'dataInicio' => '2022-04-20',//obrigatorio
         'dataFim' =>  '2022-04-28',//obrigatorio
