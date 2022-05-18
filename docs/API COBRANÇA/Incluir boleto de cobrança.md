@@ -23,6 +23,7 @@ Existe uma limitação de requisição por segundos/minuto de 10 requisições, 
         "dataEmissao" => "2022-04-28",
         "dataVencimento" => "2022-07-15",//obrigatório
         "numDiasAgenda" => 30,//obrigatório
+        "cnpjCPFBeneficiario" => '99999999999999',//CNPJ de quem está emitindo o boleto
         "pagador" => [
             "cpfCnpj" => "99999999999",//obrigatório
             "nome" => "Nome do Pagador",//obrigatório
