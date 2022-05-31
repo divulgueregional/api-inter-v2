@@ -40,10 +40,12 @@ Acesse a pasta docs e leia o README.md
 ## Contato Banco Inter:
 Poderá pedir o balanciamento dos boletos x transferências para
 +55 3003-4070 ou 0800 940 0007
-## Créditos:
-Roseno Matos (developer)<br>
+## Autor:
+Roseno Matos (developer) rosenomatos@gmail.com<br>
 Francisco Alex (Orientador)
 
+## Licença:
+A API-INTER-V2 PHP é licenciado sob a Licença MIT (MIT). Você pode usar, copiar, modificar, integrar, publicar, distribuir e/ou vender cópias dos produtos finais, mas deve sempre declarar que Roseno Matos (rosenomatos@gmail.com) é o autor original destes códigos e atribuir um link para https://github.com/divulgueregional/api-inter-v2.git.
 <!-- ## Comunidade: -->
 ## Facilitou sua vida?
 Se o projeto o ajudou em uma tarefa excencial a sua aplicação de uma forma simples e se gostaria de contribuir com uma pequena doação ao autor, faça pelo PIX abaixo<br><hr>
