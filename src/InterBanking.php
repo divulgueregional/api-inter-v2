@@ -20,7 +20,7 @@ class InterBanking
         ]);
 
         if(isset($config['verify'])){
-            if($config['verify']==false){
+            if($config['verify']=='false'){
                 $verify = false;
             }elseif($config['verify'] !=''){
                 $verify = $config['verify'];
