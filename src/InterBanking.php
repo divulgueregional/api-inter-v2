@@ -20,7 +20,7 @@ class InterBanking
         ]);
 
         if(isset($config['verify'])){
-            if($config['verify']=='false'){
+            if($config['verify']==''){
                 $verify = false;
             }elseif($config['verify'] !=''){
                 $verify = $config['verify'];
@@ -30,6 +30,7 @@ class InterBanking
         }else{
             $verify = $config['certificate'];
         }
+        
         $this->optionsRequest = [
             'headers' => [
                 'Accept' => 'application/json'
@@ -43,7 +44,7 @@ class InterBanking
     ##############################################
     ######## TOKEN ###############################
     ##############################################
-    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write')
+    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write pagamento-boleto.read pagamento-boleto.write')
     {
         $options = $this->optionsRequest;
         $options['form_params'] = [
