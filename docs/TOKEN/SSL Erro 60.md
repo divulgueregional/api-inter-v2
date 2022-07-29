@@ -4,7 +4,7 @@
 Esse erro é porque quando for verificado o certificado do Banco Inter, não é possível ler ele. Isso pode ocorrer porque o certificado não é válido ou sua máquina não posssui o SSL instalado para fazer essa leitura.
 
 ## SOLUÇÃO 1
-Coloque na variavel $config: 'verify' => false
+Coloque no config a variavel 'verify' => false
 
 ```php
     $config = [
