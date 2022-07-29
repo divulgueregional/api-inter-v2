@@ -29,6 +29,6 @@ Download do arquivo cacert.pem: https://curl.se/ca/cacert.pem
 
 ## OBSERVAÇÃO
 Caso informar verify só poderá informar 3 valores.<br>
-1- 'verify' => false
-2- 'verify' => ''
+1- 'verify' => false<br>
+2- 'verify' => true<br>
 3- 'verify' => caminho do certificado cacert.pem
