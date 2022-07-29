@@ -19,12 +19,23 @@ class InterBanking
             'base_uri' => 'https://cdpj.partners.bancointer.com.br',
         ]);
 
+        if(isset($config['verify'])){
+            if($config['verify']==false){
+                $verify = false;
+            }elseif($config['verify'] !=''){
+                $verify = $config['verify'];
+            }else{
+                $verify = $config['certificate'];
+            }
+        }else{
+            $verify = $config['certificate'];
+        }
         $this->optionsRequest = [
             'headers' => [
                 'Accept' => 'application/json'
             ],
-            'cert' => $config['certificate'],
-            'verify' => $config['certificate'],
+            'cert' => $config['certificate'], 
+            'verify' => $verify,
             'ssl_key' => $config['certificateKey'],
         ];
     }

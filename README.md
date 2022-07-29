@@ -36,6 +36,8 @@ Acesse a pasta docs e leia o README.md
 - Criar webhook
 - Obter webhook cadastrado
 - Excluir webhook
+- Obter dados CIP
+- Pagar boleto
 
 ## Contato Banco Inter:
 Poderá pedir o balanciamento dos boletos x transferências para
