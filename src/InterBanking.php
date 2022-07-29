@@ -368,6 +368,101 @@ class InterBanking
     }
 
     ##############################################
+    ######## PAGAMENTOS ##########################
+    ##############################################
+    public function obterDadosCIP($codBarrasLinhaDigitavel)
+    {
+        $codBarrasLinhaDigitavel = $this->soNumeros($codBarrasLinhaDigitavel);
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/pagamento/{$codBarrasLinhaDigitavel}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter dados CIP: {$response}"];
+        }
+    }
+
+    public function pagarBoleto($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['body'] = json_encode($filters);
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/banking/v2/pagamento",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter dados CIP: {$response}"];
+        }
+    }
+
+    public function recuperarComprovantePDF($codBarrasLinhaDigitavel)
+    {
+        $codBarrasLinhaDigitavel = $this->soNumeros($codBarrasLinhaDigitavel);
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/pagamento/comprovante/{$codBarrasLinhaDigitavel}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter dados CIP: {$response}"];
+        }
+    }
+
+    public function pagarDARF($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['body'] = json_encode($filters);
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/banking/v2/pagamento/darf",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter dados CIP: {$response}"];
+        }
+    }
+
+    ##############################################
     ######## FERRAMENTAS #########################
     ##############################################
     private function parseResultClient($result)
@@ -377,5 +472,10 @@ class InterBanking
         $body = $result->getResponse()->getBody()->getContents();
 
         return ['error' => $body, 'response' => $response, 'statusCode' => $statusCode];
+    }
+    
+    private function soNumeros($string){
+        $somenteNumeros = preg_replace('/[^0-9]/', '', $string);
+        return $somenteNumeros;
     }
 }
