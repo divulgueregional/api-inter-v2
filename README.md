@@ -16,7 +16,7 @@ composer update
 ```
 <b>Ou pela última tag: </b>
 ```php
-composer update divulgueregional/api-inter-v2 1.0.3
+composer update divulgueregional/api-inter-v2 1.0.4
 ```
 
 ## Documentação:
