@@ -22,7 +22,7 @@ class InterBanking
         if(isset($config['verify'])){
             if($config['verify']==''){
                 $verify = false;
-            }elseif($config['verify'] !=''){
+            }elseif($config['verify'] !='' && $config['verify'] !=1){
                 $verify = $config['verify'];
             }else{
                 $verify = $config['certificate'];
@@ -30,7 +30,7 @@ class InterBanking
         }else{
             $verify = $config['certificate'];
         }
-        
+
         $this->optionsRequest = [
             'headers' => [
                 'Accept' => 'application/json'
