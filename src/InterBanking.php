@@ -397,8 +397,9 @@ class InterBanking
     public function pagarBoleto($filters)
     {
         $options = $this->optionsRequest;
-        $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['body'] = json_encode($filters);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
             $response = $this->client->request(
                 'POST',
@@ -443,8 +444,9 @@ class InterBanking
     public function pagarDARF($filters)
     {
         $options = $this->optionsRequest;
-        $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['body'] = json_encode($filters);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
             $response = $this->client->request(
                 'POST',
