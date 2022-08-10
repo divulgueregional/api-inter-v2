@@ -39,7 +39,7 @@ Acesse a pasta docs e leia o README.md
 - Obter dados CIP
 - Pagar boleto
 - Pagar DARF
-- Recuperar Comprovante em PDF
+<!-- - Recuperar Comprovante em PDF -->
 
 ## Contato Banco Inter:
 Poderá pedir o balanciamento dos boletos x transferências para
