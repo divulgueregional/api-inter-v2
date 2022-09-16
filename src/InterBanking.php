@@ -418,6 +418,31 @@ class InterBanking
         }
     }
 
+    public function informacaoPagamentoBoleto($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/pagamento",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar saldo: {$response}"];
+        }
+    }
+
+    //essa função foi retirada
     public function recuperarComprovantePDF($codBarrasLinhaDigitavel)
     {
         $codBarrasLinhaDigitavel = $this->soNumeros($codBarrasLinhaDigitavel);
@@ -462,6 +487,30 @@ class InterBanking
         } catch (\Exception $e) {
             $response = $e->getMessage();
             return ['error' => "Falha ao obter dados CIP: {$response}"];
+        }
+    }
+
+    public function informacaoPagamentoDARF($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/pagamento/darf",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar saldo: {$response}"];
         }
     }
 

@@ -25,8 +25,8 @@ Obter token oAuth
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
     ];
 
-    $client_id = '',//seu client_id
-    $client_secret = '',//client_secret
+    $client_id = '';//seu client_id
+    $client_secret = '';//client_secret
     try {
         $bankingInter = new InterBanking($config);
         
