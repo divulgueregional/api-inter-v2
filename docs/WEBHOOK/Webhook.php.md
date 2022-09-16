@@ -13,8 +13,9 @@ Arquivo webhook.php
     $situacao = $retorno->situacao;
 
     //gravando na pasta um arquivo log com o retorno
+    $aleatorio = rand(1, 500);
     $dataHora = date('Y-m-d H:s:i');
-    $fp = fopen("logWebHookInter-{$dataHora}.log", "a");
+    $fp = fopen("logWebHookInter-{$aleatorio}-{$dataHora}.log", "a");
     fwrite($fp, $Post_Recebe);
     fclose($fp);
 
