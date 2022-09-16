@@ -7,17 +7,21 @@ Essa documentação visa auxiliar a implementação com a API do Banco Inter usa
 ## PRIMEIRO PASSSO
 Acesse sua conta no site do Banco do Inter e gere uma aplicação para obter o certificado crt e key.<br>
 Após gerar o certificado baixe ele e pegue o client_id e client_secret.<br>
-Gere o token para poder utilizar as funcionalidades da API Banking, API cobranças e Webhook.
+Gere o token para poder utilizar as funcionalidades da API Banking e API cobranças
 
-## API Banking
-Estas funcionalidades incluem até o momento:
 
-- Consultar extrato
-- Consultar extrato em pdf
-- Consultar saldo
-## API Cobranças
-Suas funcionalidades são:
+# ENDPOINTS DA API DO BANCO INTER
 
+## AUTENTICAÇÃO OAUTH
+Esse é o endpoint incluído até o momento:
+
+<b>Token</b>
+- Obter token oAuth
+
+## API Cobrança
+Esses são os endpoint incluídos até o momento:
+
+<b>Boletos</b>
 - Incluir boleto de cobrança.
 - Recuperar coleção de boletos
 - Recuperar sumário de boletos
@@ -25,13 +29,25 @@ Suas funcionalidades são:
 - Recuperar boleto em PDF
 - Cancelar boleto
 
-
-## Webhooks
-A integração via webhook oferece a possibilidade de o Inter enviar ao sistema do parceiro atualizações referentes aos serviços utilizados, em tempo real, tornando esta troca de informações mais segura, ágil e eficaz.
-
-Suas funcionalidades são:
-
+<b>Webhook</b>
 - Criar webhook.
 - Obter webhook cadastrado
 - Excluir webhook
 - webhook.php
+
+## API Banking
+Esses são os endpoint incluídos até o momento:
+
+<b>Extrato</b>
+- Consultar extrato
+- Consultar extrato em pdf
+
+<b>Saldo</b>
+- Consultar saldo
+
+<b>Pagamento</b>
+- Obter dados CIP.
+- Incluir pagamento com código de barras
+- Busca informações de pagamentos de boleto
+- Incluir pagamento de DARF
+- Busca informações de pagamentos DARF

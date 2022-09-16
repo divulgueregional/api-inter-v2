@@ -23,7 +23,7 @@ composer update divulgueregional/api-inter-v2 1.0.6
 Acesse a pasta docs e leia o README.md
 
 ## O QUE VOCÊ PODE UTILIZAR
-- Gerar o token
+- Obter token oAuth
 - Incluir boleto de cobrança
 - Recuperar coleção de boletos
 - Recuperar sumário de boletos
@@ -36,9 +36,11 @@ Acesse a pasta docs e leia o README.md
 - Criar webhook
 - Obter webhook cadastrado
 - Excluir webhook
-- Obter dados CIP
-- Pagar boleto
-- Pagar DARF
+- Obter dados CIP.
+- Incluir pagamento com código de barras
+- Busca informações de pagamentos de boleto
+- Incluir pagamento de DARF
+- Busca informações de pagamentos DARF
 <!-- - Recuperar Comprovante em PDF -->
 
 ## Contato Banco Inter:
