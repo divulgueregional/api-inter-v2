@@ -29,7 +29,7 @@ Consultar extrato da conta.
         // print_r($extratos);
         foreach ($extratos['transacoes'] as $extrato) {
             // print_r($extrato);
-            echo $extrato->dataInclusaos.
+            echo $extrato->dataEntrada.
             ' - '.$extrato->tipoTransacao.
             ' - '.$extrato->tipoOperacao.
             ' - '.$extrato->titulo.
