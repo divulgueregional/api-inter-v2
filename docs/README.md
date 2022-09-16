@@ -13,13 +13,11 @@ Gere o token para poder utilizar as funcionalidades da API Banking e API cobran�
 # ENDPOINTS DA API DO BANCO INTER
 
 ## AUTENTICAÇÃO OAUTH
-Esse é o endpoint incluído até o momento:
 
 <b>Token</b>
 - Obter token oAuth
 
 ## API Cobrança
-Esses são os endpoint incluídos até o momento:
 
 <b>Boletos</b>
 - Incluir boleto de cobrança.
@@ -36,7 +34,6 @@ Esses são os endpoint incluídos até o momento:
 - webhook.php
 
 ## API Banking
-Esses são os endpoint incluídos até o momento:
 
 <b>Extrato</b>
 - Consultar extrato
