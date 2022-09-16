@@ -1,4 +1,4 @@
-# RECUPERAR COMPROVANTE EM PDF
+# RECUPERAR COMPROVANTE EM PDF - FOI RETIRADO DA APAI
 
 ## Recuperar comprovante em PDF
 Busca o comprovante de pagamento através do código de barras ou linha digitável e retorna o base64 do PDF.<br>
