@@ -1,5 +1,6 @@
 # RECUPERAR COMPROVANTE EM PDF - FOI RETIRADO DA API
 
+## FOI RETIRADO DA API
 ## Recuperar comprovante em PDF
 Busca o comprovante de pagamento através do código de barras ou linha digitável e retorna o base64 do PDF.<br>
 Este endpoint está implementado com um rate-limit de 120 chamadas por minuto.
