@@ -40,6 +40,9 @@ Acesse a pasta docs e leia o README.md
 - Incluir pagamento de DARF
 - Busca informações de pagamentos DARF
 <!-- - Recuperar Comprovante em PDF -->
+## FALTA IMPLEMENTAR
+- Incluir pagamentos em lote
+- Buscar lote de pagamentos
 
 ## Contato Banco Inter:
 Poderá pedir o balanciamento dos boletos x transferências para
