@@ -26,6 +26,7 @@ Acesse a pasta docs e leia o README.md
 - Recuperar sumário de boletos
 - Recuperar boleto detalhado
 - Recuperar boleto em PDF
+- Boleto em PDF
 - Cancelar boleto
 - Consultar extrato.
 - Recuperar extrato em PDF
