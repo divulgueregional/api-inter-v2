@@ -1,11 +1,11 @@
-# BOLETO PDF-BB
+# BOLETO PDF-INTER
 
 ## Boleto em PDF
-A API do Banco do Brasil não fornece um PDF de boleto pronto.<br>
-Foi feito um layout usando o DomPDF para gerar o PDF.<br>
+A API do Inter oforece um PDF de boleto pronto.<br>
+Porém, foi feito um layout usando o DomPDF para gerar o PDF.<br>
 
 ## Exemplo de uso
-acesse o arquivo index.php<br>
+acesse o arquivo visualizaBoleto.php<br>
 vai ser necessário você ter instalado o domPDF
 ```php
 composer require dompdf/dompdf
