@@ -1,7 +1,7 @@
 # BOLETO PDF-INTER
 
 ## Boleto em PDF
-A API do Inter oforece um PDF de boleto pronto.<br>
+A API do Inter disponibiliza um PDF de boleto pronto.<br>
 Porém, foi feito um layout usando o DomPDF para gerar o PDF.<br>
 
 ## Exemplo de uso
