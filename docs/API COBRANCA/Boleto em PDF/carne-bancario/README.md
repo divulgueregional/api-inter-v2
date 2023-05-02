@@ -1,4 +1,4 @@
-# CARNE-BANCÁRIO PDF-BB
+# CARNE-BANCÁRIO PDF-INTER/BB
 
 ## Carne bancário em PDF
 Possibilita colocar mais e um boleto gerando um carnê.<br>
