@@ -1,3 +1,9 @@
 /vendor
 composer.lock
 /API PAGAMENTO/Recuperar Comprovante em PDF.md
+
+/docs/API COBRANCA/Boleto em PDF/boleto carne/carne-bancario.zip
+/docs/API COBRANCA/Boleto em PDF/carne-bancario/vendor
+/docs/API COBRANCA/Boleto em PDF/carne-bancario/composer.json
+/docs/API COBRANCA/Boleto em PDF/carne-bancario/composer.lock
+/docs/API COBRANCA/Boleto em PDF/carne-bancario/nbproject
