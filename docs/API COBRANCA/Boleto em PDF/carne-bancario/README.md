@@ -12,6 +12,10 @@ vai ser necessário você ter instalado o domPDF
 ```php
 composer require dompdf/dompdf
 ```
+para gerar o código de barra foi usado o picqer
+```php
+composer require picqer/php-barcode-generator
+```
 
 ## Autor:
 Igor Lisboa Monteiro (developer) iggorlisboa@gmail.com<br>

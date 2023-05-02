@@ -1,5 +1,5 @@
 <?php
-require_once 'vendor/autoload.php';//dompdf
+require_once 'vendor/autoload.php';//dompdf e picqer
 require_once 'CarneBancario/CarneBancario.php';
 require_once 'Util/ConversorDadosCarne.php';
 
