@@ -35,6 +35,7 @@ Acesse a pasta docs e leia o README.md
 - Criar webhook
 - Obter webhook cadastrado
 - Excluir webhook
+- WevHook Callback
 - Obter dados CIP.
 - Incluir pagamento com código de barras
 - Busca informações de pagamentos de boleto
