@@ -392,6 +392,30 @@ class InterBanking
         }
     }
 
+    public function callbacks($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v2/boletos/webhook/callbacks",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar Extrato em PDF: {$response}"];
+        }
+    }
+
     ##############################################
     ######## PAGAMENTOS ##########################
     ##############################################
