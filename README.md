@@ -13,7 +13,7 @@ composer require divulgueregional/api-inter-v2
 ## Atualizar:
 <b>Pela última tag: </b>
 ```php
-composer update divulgueregional/api-inter-v2 1.0.12
+composer update divulgueregional/api-inter-v2 1.0.13
 ```
 
 ## Documentação:
