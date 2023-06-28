@@ -32,6 +32,7 @@ Acesse a pasta docs e leia o README.md
 - Recuperar extrato em PDF
 - Consultar extrato enriquecido
 - Consultar saldo.
+- Incluir Pix - pagar alguém
 - Criar webhook
 - Obter webhook cadastrado
 - Excluir webhook
@@ -43,7 +44,7 @@ Acesse a pasta docs e leia o README.md
 - Busca informações de pagamentos DARF
 <!-- - Recuperar Comprovante em PDF -->
 ## FALTA IMPLEMENTAR
-- API Pix
+- API Pix - Em desenvolvimento
 - Incluir pagamentos em lote
 - Buscar lote de pagamentos
 

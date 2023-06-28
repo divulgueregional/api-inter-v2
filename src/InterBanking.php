@@ -176,6 +176,30 @@ class InterBanking
             return ['error' => "Falha ao consultar o extrato Completo: {$response}"];
         }
     }
+
+    public function IncluirPix($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['body'] = json_encode($filters);
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/banking/v2/pix",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter dados CIP: {$response}"];
+        }
+    }
     ##############################################
     ######## FIM BANKING #########################
     ##############################################
