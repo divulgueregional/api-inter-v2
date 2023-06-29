@@ -44,7 +44,7 @@ class InterBanking
     ##############################################
     ######## TOKEN ###############################
     ##############################################
-    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write pagamento-boleto.read pagamento-boleto.write')
+    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write pagamento-boleto.read pagamento-boleto.write pagamento-pix.write cob.write cob.read pix.read pix.write')
     {
         $options = $this->optionsRequest;
         $options['form_params'] = [
@@ -586,6 +586,129 @@ class InterBanking
         }
     }
 
+    ##############################################
+    ######## PIX - COBRANÇA IMEDIATA #############
+    ##############################################
+    public function consultarCobrancaImediata($txid)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/pix/v2/cob/{$txid}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao Consultar Cobranca imediata: {$response}"];
+        }
+    }
+
+    ##############################################
+    ######## PIX #################################
+    ##############################################
+    // PATH PARAMS
+    public function consultarPix($e2eId)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/pix/v2/pix/{$e2eId}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao Consultar Cobranca imediata: {$response}"];
+        }
+    }
+
+    // QUERY PARAMS
+    public function consultarPixRecebidos($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/pix/v2/pix",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar saldo: {$response}"];
+        }
+    }
+
+    // PATH PARAMS - BETA
+    public function solicitardevolucao($e2eId, $id, $filter)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($filter);
+        try {
+            $response = $this->client->request(
+                'PUT',
+                "/pix/v2/pix/{$e2eId}/devolucao/{$id}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao Consultar Cobranca imediata: {$response}"];
+        }
+    }
+
+    // PATH PARAMS
+    public function consultadevolucao($e2eId, $id)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/pix/v2/pix/{$e2eId}/devolucao/{$id}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao Consultar Cobranca imediata: {$response}"];
+        }
+    }
     ##############################################
     ######## FERRAMENTAS #########################
     ##############################################

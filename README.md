@@ -43,6 +43,12 @@ Acesse a pasta docs e leia o README.md
 - Incluir pagamento de DARF
 - Busca informações de pagamentos DARF
 <!-- - Recuperar Comprovante em PDF -->
+## API PIX
+- Consultar pix recebidos
+- Consultar pix
+- Solicitar devolução
+- Consultar devolução
+
 ## FALTA IMPLEMENTAR
 - API Pix - Em desenvolvimento
 - Incluir pagamentos em lote
