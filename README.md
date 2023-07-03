@@ -13,7 +13,7 @@ composer require divulgueregional/api-inter-v2
 ## Atualizar:
 <b>Pela última tag: </b>
 ```php
-composer update divulgueregional/api-inter-v2 1.0.14
+composer update divulgueregional/api-inter-v2 1.0.115
 ```
 
 ## Documentação:
@@ -43,6 +43,14 @@ Acesse a pasta docs e leia o README.md
 - Incluir pagamento de DARF
 - Busca informações de pagamentos DARF
 <!-- - Recuperar Comprovante em PDF -->
+## API PIX COBRANÇA IMEDIATA
+- Criar cobrança imediata - você informa txid
+- Criar cobrança imediata PSP - banco informa txid
+- Atualizar cobrança imediata
+- Consultar cobrança imediata
+- Consultar lista de cobranças imediatas
+- Gerar o QRCode na tela
+
 ## API PIX
 - Consultar pix recebidos
 - Consultar pix
