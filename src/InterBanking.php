@@ -589,6 +589,55 @@ class InterBanking
     ##############################################
     ######## PIX - COBRANÇA IMEDIATA #############
     ##############################################
+    // REQUEST BODY SCHEMA
+    public function criarCobrancaImediata($txid, $filter){
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($filter);
+        try {
+            $response = $this->client->request(
+                'PUT',
+                "/pix/v2/cob/{$txid}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+        }
+    }
+
+    // REQUEST BODY SCHEMA
+    public function atualizarCobrancaImediata($txid, $filter)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($filter);
+        try {
+            $response = $this->client->request(
+                'PATCH',
+                "/pix/v2/cob/{$txid}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+        }
+    }
+
     public function consultarCobrancaImediata($txid)
     {
         $options = $this->optionsRequest;
@@ -608,6 +657,56 @@ class InterBanking
         } catch (\Exception $e) {
             $response = $e->getMessage();
             return ['error' => "Falha ao Consultar Cobranca imediata: {$response}"];
+        }
+    }
+
+    // REQUEST BODY SCHEMA
+    public function criarCobrancaImediataPSP($filter)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($filter);
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/pix/v2/cob",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+        }
+    }
+
+    // QUERY PARAMS
+    public function consultarListaCobrancaImediata($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/pix/v2/cob",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar saldo: {$response}"];
         }
     }
 
