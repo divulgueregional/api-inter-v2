@@ -43,7 +43,7 @@ Acesse a pasta docs e leia o README.md
 - Incluir pagamento de DARF
 - Busca informações de pagamentos DARF
 <!-- - Recuperar Comprovante em PDF -->
-## API PIX COBRANÇA IMEDIATA
+## PIX COBRANÇA IMEDIATA
 - Criar cobrança imediata - você informa txid
 - Criar cobrança imediata PSP - banco informa txid
 - Atualizar cobrança imediata
@@ -51,7 +51,7 @@ Acesse a pasta docs e leia o README.md
 - Consultar lista de cobranças imediatas
 - Gerar o QRCode na tela
 
-## API PIX
+## PIX
 - Consultar pix recebidos
 - Consultar pix
 - Solicitar devolução
