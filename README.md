@@ -13,7 +13,7 @@ composer require divulgueregional/api-inter-v2
 ## Atualizar:
 <b>Pela última tag: </b>
 ```php
-composer update divulgueregional/api-inter-v2 1.0.15
+composer update divulgueregional/api-inter-v2 1.0.16
 ```
 
 ## Documentação:
@@ -57,8 +57,15 @@ Acesse a pasta docs e leia o README.md
 - Solicitar devolução
 - Consultar devolução
 
+## PIX WHEBHOOK
+- Consultar callbacks
+- Obter webhook cadastrado
+- Criar webhook
+- Excluir webhook
+
 ## FALTA IMPLEMENTAR
-- API Pix - Em desenvolvimento
+- Pix -  Cobrança com Vencimento - Em desenvolvimento
+- Pix -  Location
 - Incluir pagamentos em lote
 - Buscar lote de pagamentos
 
