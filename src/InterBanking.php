@@ -44,7 +44,7 @@ class InterBanking
     ##############################################
     ######## TOKEN ###############################
     ##############################################
-    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write pagamento-boleto.read pagamento-boleto.write pagamento-pix.write cob.write cob.read pix.read pix.write')
+    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write pagamento-boleto.read pagamento-boleto.write pagamento-pix.write cob.write cob.read pix.read pix.write webhook.write webhook.read')
     {
         $options = $this->optionsRequest;
         $options['form_params'] = [
@@ -808,6 +808,104 @@ class InterBanking
             return ['error' => "Falha ao Consultar Cobranca imediata: {$response}"];
         }
     }
+
+    ##############################################
+    ######## WEBHOOK #############################
+    ##############################################
+    // PATH PARAMETERS
+    public function criarWebhookPix(string $chave, string $webhookUrl)
+    {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode(['webhookUrl' => $webhookUrl]);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'PUT',
+                "/pix/v2/webhook/{$chave}",
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao criar Webhook Pix: {$response}"];
+        }
+    }
+
+    // PATH PARAMETERS
+    public function obterWebhookCadastradoPix(string $chave)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/pix/v2/webhook/{$chave}",
+                $options
+            );https://cdpj.partners.bancointer.com.br/pix/v2/webhook/{chave}
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter Webhook Cadastrado: {$response}"];
+        }
+    }
+
+    // PATH PARAMETERS
+    public function excluirWebhookPix(string $chave)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'DELETE',
+                "/pix/v2/webhook/{$chave}",
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao excluir Webhook Pix: {$response}"];
+        }
+    }
+
+    // QUERY PARAMETERS
+    public function callbacksPix($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/pix/v2/webhook/callbacks",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar callBack Pix: {$response}"];
+        }
+    }
+
     ##############################################
     ######## FERRAMENTAS #########################
     ##############################################
