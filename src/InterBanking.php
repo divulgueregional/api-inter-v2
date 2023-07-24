@@ -44,7 +44,7 @@ class InterBanking
     ##############################################
     ######## TOKEN ###############################
     ##############################################
-    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write pagamento-boleto.read pagamento-boleto.write pagamento-pix.write cob.write cob.read pix.read pix.write webhook.write webhook.read')
+    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write pagamento-boleto.read pagamento-boleto.write pagamento-pix.write cob.write cob.read pix.read pix.write webhook.write webhook.read cobv.write cobv.write cobv.read')
     {
         $options = $this->optionsRequest;
         $options['form_params'] = [
@@ -696,6 +696,106 @@ class InterBanking
             $response = $this->client->request(
                 'GET',
                 "/pix/v2/cob",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar saldo: {$response}"];
+        }
+    }
+
+    ##############################################
+    ######## PIX - COBRANÇA VENCIMENTO ###########
+    ##############################################
+    // REQUEST BODY SCHEMA
+    public function criarCobrancaVencimento($txid, $filter)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($filter);
+        try {
+            $response = $this->client->request(
+                'PUT',
+                "/pix/v2/cobv/{$txid}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+        }
+    }
+
+    // REQUEST BODY SCHEMA
+    public function atualizarCobrancaVencimento($txid, $filter)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($filter);
+        try {
+            $response = $this->client->request(
+                'PATCH',
+                "/pix/v2/cobv/{$txid}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+        }
+    }
+
+    public function consultarCobrancaVencimento($txid)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/pix/v2/cobv/{$txid}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao Consultar Cobranca imediata: {$response}"];
+        }
+    }
+
+    // QUERY PARAMS
+    public function consultarListaCobrancaVencimento($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/pix/v2/cobv",
                 $options
             );
 
