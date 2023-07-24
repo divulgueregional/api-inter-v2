@@ -31,7 +31,7 @@ Rate limit: 120 chamadas por minuto<br>
             "original" => '5.00',//string required- valores monetários referentes à cobrança.
             "modalidadeAlteracao" => 0,//int Trata-se de um campo que determina se o valor final do documento pode ser alterado pelo pagador. Na ausência desse campo, assume-se que não se pode alterar o valor do documento de cobrança, ou seja, assume-se o valor 0. Se o campo estiver presente e com valor 1, então está determinado que o valor final da cobrança pode ter seu valor alterado pelo pagador.
         ],
-        // "chave" => "13236787000137",//string chave Pix do recebedor. Chave podem ser: telefone, e-mail, cpf/cnpj ou EVP.
+        // "chave" => "",//string chave Pix do recebedor. Chave podem ser: telefone, e-mail, cpf/cnpj ou EVP.
         "solicitacaoPagador" => "Pix Texte",//O campo solicitacaoPagador determina um texto a ser apresentado ao pagador para que ele possa digitar uma informação correlata, em formato livre, a ser enviada ao recebedor. Esse texto está limitado a 140 caracteres.
         // "infoAdicionais" => [
         //     [
