@@ -13,7 +13,7 @@ composer require divulgueregional/api-inter-v2
 ## Atualizar:
 <b>Pela última tag: </b>
 ```php
-composer update divulgueregional/api-inter-v2 1.0.16
+composer update divulgueregional/api-inter-v2 1.0.17
 ```
 
 ## Documentação:
@@ -48,7 +48,14 @@ Acesse a pasta docs e leia o README.md
 - Criar cobrança imediata PSP - banco informa txid
 - Atualizar cobrança imediata
 - Consultar cobrança imediata
-- Consultar lista de cobranças imediatas
+- Lista de cobranças imediatas
+- Gerar o QRCode na tela
+
+## PIX COBRANÇA COM VENCIMENTO
+- Criar cobrança com vencimento - você informa txid
+- Atualizar cobrança com vencimento
+- Consultar cobrança com vencimento
+- Lista de cobranças com vencimento
 - Gerar o QRCode na tela
 
 ## PIX
@@ -64,7 +71,6 @@ Acesse a pasta docs e leia o README.md
 - Excluir webhook
 
 ## FALTA IMPLEMENTAR
-- Pix -  Cobrança com Vencimento - Em desenvolvimento
 - Pix -  Location
 - Incluir pagamentos em lote
 - Buscar lote de pagamentos
