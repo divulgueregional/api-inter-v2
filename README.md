@@ -13,7 +13,7 @@ composer require divulgueregional/api-inter-v2
 ## Atualizar:
 <b>Pela última tag: </b>
 ```php
-composer update divulgueregional/api-inter-v2 1.0.17
+composer update divulgueregional/api-inter-v2 1.0.18
 ```
 
 ## Documentação:
@@ -42,6 +42,7 @@ Acesse a pasta docs e leia o README.md
 - Busca informações de pagamentos de boleto
 - Incluir pagamento de DARF
 - Busca informações de pagamentos DARF
+- Cancelar agendamento do pagamento
 <!-- - Recuperar Comprovante em PDF -->
 ## PIX COBRANÇA IMEDIATA
 - Criar cobrança imediata - você informa txid
