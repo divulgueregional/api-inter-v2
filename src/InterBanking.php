@@ -586,6 +586,28 @@ class InterBanking
         }
     }
 
+    public function cancelarAgendamentoPagamento(string $codigoTransacao)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'DELETE',
+                "/banking/v2/pagamento/{$codigoTransacao}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao cancelar agendamento: {$response}"];
+        }
+    }
+
     ##############################################
     ######## PIX - COBRANÇA IMEDIATA #############
     ##############################################
