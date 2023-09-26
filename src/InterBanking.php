@@ -452,7 +452,7 @@ class InterBanking
         try {
             $response = $this->client->request(
                 'PUT',
-                "/cobranca/v3/webhook",
+                "/cobranca/v3/cobrancas/webhook",
                 $options
             );
             $statusCode = $response->getStatusCode();
@@ -473,7 +473,7 @@ class InterBanking
         try {
             $response = $this->client->request(
                 'GET',
-                "/cobranca/v3/webhook",
+                "/cobranca/v3/cobrancas/webhook",
                 $options
             );
             $statusCode = $response->getStatusCode();
@@ -494,7 +494,7 @@ class InterBanking
         try {
             $response = $this->client->request(
                 'DELETE',
-                "/cobranca/v3/webhook",
+                "/cobranca/v3/cobrancas/webhook",
                 $options
             );
             $statusCode = $response->getStatusCode();
@@ -517,7 +517,7 @@ class InterBanking
         try {
             $response = $this->client->request(
                 'GET',
-                "/cobranca/v3/webhook/callbacks",
+                "/cobranca/v3/cobrancas/webhook/callbacks",
                 $options
             );
             $statusCode = $response->getStatusCode();
