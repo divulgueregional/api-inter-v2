@@ -19,15 +19,15 @@ class InterBanking
             'base_uri' => 'https://cdpj.partners.bancointer.com.br',
         ]);
 
-        if(isset($config['verify'])){
-            if($config['verify']==''){
+        if (isset($config['verify'])) {
+            if ($config['verify'] == '') {
                 $verify = false;
-            }elseif($config['verify'] !='' && $config['verify'] !=1){
+            } elseif ($config['verify'] != '' && $config['verify'] != 1) {
                 $verify = $config['verify'];
-            }else{
+            } else {
                 $verify = $config['certificate'];
             }
-        }else{
+        } else {
             $verify = $config['certificate'];
         }
 
@@ -35,7 +35,7 @@ class InterBanking
             'headers' => [
                 'Accept' => 'application/json'
             ],
-            'cert' => $config['certificate'], 
+            'cert' => $config['certificate'],
             'verify' => $verify,
             'ssl_key' => $config['certificateKey'],
         ];
@@ -212,7 +212,7 @@ class InterBanking
     {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
-        
+
         try {
             $response = $this->client->request(
                 'GET',
@@ -441,6 +441,237 @@ class InterBanking
     }
 
     ##############################################
+    ######## WEBHOOK COBRANÇA PIX ################
+    ##############################################
+    public function criarWebhookCobPIx(string $webhookUrl)
+    {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode(['webhookUrl' => $webhookUrl]);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'PUT',
+                "/cobranca/v3/webhook",
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao criar Webhook: {$response}"];
+        }
+    }
+
+    public function obterWebhookCadastradoCobPIx()
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v3/webhook",
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter Webhook Cadastrado: {$response}"];
+        }
+    }
+
+    public function excluirWebhookCobPIx()
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'DELETE',
+                "/cobranca/v3/webhook",
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao excluir Webhook: {$response}"];
+        }
+    }
+
+    public function callbacksCobPIx($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v3/webhook/callbacks",
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar Extrato em PDF: {$response}"];
+        }
+    }
+
+    ##############################################
+    ######## COBRANÇAS BOLETO PIX ################
+    ##############################################
+    public function ObterCobrancaPix(string $codigoCobranca)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v3/cobrancas/{$codigoCobranca}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao Obter Cobranca Pix: {$response}"];
+        }
+    }
+
+    public function boletoPDFPix(string $codigoCobranca)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v3/cobrancas/{$codigoCobranca}/pdf",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar boleto em PDF: {$response}"];
+        }
+    }
+
+    public function cancelarBoletoPix(string $codigoCobranca, string $motivo)
+    {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode(['motivoCancelamento' => $motivo]);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/cobranca/v3/cobrancas/{$codigoCobranca}/cancelar",
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao cancelar Boleto: {$response}"];
+        }
+    }
+
+    public function sumarioBoletosPix($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v3/cobrancas/sumario",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao consultar o sumário: {$response}"];
+        }
+    }
+
+    public function colecaoBoletosPix($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v3/cobrancas",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao consultar coleção de boletos: {$response}"];
+        }
+    }
+
+    public function incluirBoletoCobrancaPix($dadosBoleto)
+    {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode($dadosBoleto);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'POST',
+                '/cobranca/v3/cobrancas',
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao incluir Boleto Cobranca pix: {$response}"];
+        }
+    }
+
+    ##############################################
     ######## PAGAMENTOS ##########################
     ##############################################
     public function obterDadosCIP($codBarrasLinhaDigitavel)
@@ -612,7 +843,8 @@ class InterBanking
     ######## PIX - COBRANÇA IMEDIATA #############
     ##############################################
     // REQUEST BODY SCHEMA
-    public function criarCobrancaImediata($txid, $filter){
+    public function criarCobrancaImediata($txid, $filter)
+    {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['headers']['Content-Type'] = 'application/json';
@@ -932,7 +1164,7 @@ class InterBanking
     }
 
     ##############################################
-    ######## WEBHOOK #############################
+    ######## WEBHOOK PIX #########################
     ##############################################
     // PATH PARAMETERS
     public function criarWebhookPix(string $chave, string $webhookUrl)
@@ -968,7 +1200,8 @@ class InterBanking
                 'GET',
                 "/pix/v2/webhook/{$chave}",
                 $options
-            );https://cdpj.partners.bancointer.com.br/pix/v2/webhook/{chave}
+            );
+            https: //cdpj.partners.bancointer.com.br/pix/v2/webhook/{chave}
 
             $statusCode = $response->getStatusCode();
             $result = json_decode($response->getBody()->getContents());
@@ -1028,6 +1261,7 @@ class InterBanking
         }
     }
 
+
     ##############################################
     ######## FERRAMENTAS #########################
     ##############################################
@@ -1039,8 +1273,9 @@ class InterBanking
 
         return ['error' => $body, 'response' => $response, 'statusCode' => $statusCode];
     }
-    
-    private function soNumeros($string){
+
+    private function soNumeros($string)
+    {
         $somenteNumeros = preg_replace('/[^0-9]/', '', $string);
         return $somenteNumeros;
     }
