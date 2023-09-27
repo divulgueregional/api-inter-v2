@@ -491,6 +491,7 @@ class InterBanking
     {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Accept'] = "application/problem+json";
         try {
             $response = $this->client->request(
                 'DELETE',
