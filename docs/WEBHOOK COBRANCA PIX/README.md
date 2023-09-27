@@ -15,3 +15,7 @@ Suas funcionalidades são:
 - Obter webhook cadastrado
 - Excluir webhook
 - webhook.php
+
+## Notificações
+
+Irá receber notificações do boleto gerado, cancelamento e pagamento<br>
