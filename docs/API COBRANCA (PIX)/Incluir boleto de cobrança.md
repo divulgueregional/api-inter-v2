@@ -43,6 +43,19 @@ Rate limit: 120 chamadas por minuto
             "ddd" => "",
             "tipoPessoa" => "FISICA"//obrigatório
         ],
+            // "desconto" => [
+            //     "taxa" => 0,
+            //     "codigo" => "VALORFIXODATAINFORMADA", // VALORFIXODATAINFORMADA - Valor fixo até a data informada.; PERCENTUALDATAINFORMADA - Percentual até a data informada.
+            //     "quantidadeDias" => 0,
+            // ],
+            // "multa" => [
+            //     "taxa" => 0,
+            //     "codigo" => "VALORFIXO", // TAXAMENSAL OU PERCENTUAL
+            // ],
+            // "mora" => [
+            //     "taxa" => 0,
+            //     "codigo" => "TAXAMENSAL", // TAXAMENSAL OU VALORDIA
+            // ],
         "mensagem" => [
             "linha1" => "Teste de evio 1",
             "linha2" => "Teste de evio 2",
@@ -50,36 +63,6 @@ Rate limit: 120 chamadas por minuto
             "linha4" => "",
             "linha5" => ""
         ],
-        "desconto1" => [
-            "codigoDesconto" => "NAOTEMDESCONTO",
-            "taxa" => 0,
-            "valor" => 0,
-            "data" => ""
-        ],
-        "desconto2" => [
-            "codigoDesconto" => "NAOTEMDESCONTO",
-            "taxa" => 0,
-            "valor" => 0,
-            "data" => ""
-        ],
-        "desconto3" => [
-            "codigoDesconto" => "NAOTEMDESCONTO",
-            "taxa" => 0,
-            "valor" => 0,
-            "data" => ""
-        ],
-        "multa" => [
-            "codigoMulta" => "NAOTEMMULTA",
-            "data" => "",
-            "taxa" => 0,
-            "valor" => 0
-        ],
-        "mora" => [
-            "codigoMora" => "ISENTO",
-            "data" => "",
-            "taxa" => 0,
-            "valor" => 0
-        ]
     ];
 
     $token = '';//seu token
