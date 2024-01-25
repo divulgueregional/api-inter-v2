@@ -72,7 +72,7 @@ Rate limit: 120 chamadas por minuto
 
         echo "<pre>";
         $response = $bankingInter->incluirBoletoCobrancaPix($dadosBoleto);
-        // echo $incluirBoletoCobranca->nossoNumero;
+        // echo $incluirBoletoCobranca->codigoSolicitacao;
         print_r($response);
     } catch (\Exception $e) {
         echo $e->getMessage();
