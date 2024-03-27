@@ -1,0 +1,19 @@
+{
+    "name": "divulgueregional/cielo-lio-remoto",
+    "description": "API para integração com a maquina Cielo Lio Remoto",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Divulgueregional\\CieloLioRemoto\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Roseno Matos",
+            "email": "roseno@drsystema.com.br"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.0"
+    }
+}
