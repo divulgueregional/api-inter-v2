@@ -7,14 +7,12 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Message;
 
-class InterBanking
-{
+class InterBanking {
     protected $token;
     protected $optionsRequest = [];
 
     private $client;
-    function __construct(array $config)
-    {
+    function __construct(array $config) {
         $this->client = new Client([
             'base_uri' => 'https://cdpj.partners.bancointer.com.br',
         ]);
@@ -44,8 +42,7 @@ class InterBanking
     ##############################################
     ######## TOKEN ###############################
     ##############################################
-    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write pagamento-boleto.read pagamento-boleto.write pagamento-pix.write cob.write cob.read pix.read pix.write webhook.write webhook.read cobv.write cobv.write cobv.read')
-    {
+    public function getToken(string $client_id, string $client_secret, $scope = 'extrato.read boleto-cobranca.read boleto-cobranca.write pagamento-boleto.read pagamento-boleto.write pagamento-pix.write cob.write cob.read pix.read pix.write webhook.write webhook.read cobv.write cobv.write cobv.read pagamento-pix.read') {
         $options = $this->optionsRequest;
         $options['form_params'] = [
             'client_id' => $client_id,
@@ -70,8 +67,7 @@ class InterBanking
         }
     }
 
-    public function setToken(string $token)
-    {
+    public function setToken(string $token) {
         $this->token = $token;
     }
     ##############################################
@@ -81,8 +77,7 @@ class InterBanking
     ##############################################
     ######## BANKING #############################
     ##############################################
-    public function checkSaldo($filters)
-    {
+    public function checkSaldo($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -105,8 +100,7 @@ class InterBanking
         }
     }
 
-    public function checkExtrato($filters)
-    {
+    public function checkExtrato($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -129,8 +123,7 @@ class InterBanking
         }
     }
 
-    public function checkExtratoPDF($filters)
-    {
+    public function checkExtratoPDF($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -153,8 +146,7 @@ class InterBanking
         }
     }
 
-    public function consultarExtratoEnriquecido($filters)
-    {
+    public function consultarExtratoEnriquecido($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -177,8 +169,7 @@ class InterBanking
         }
     }
 
-    public function IncluirPix($filters)
-    {
+    public function IncluirPix($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Content-Type'] = 'application/json';
         $options['headers']['Authorization'] = "Bearer {$this->token}";
@@ -200,6 +191,30 @@ class InterBanking
             return ['error' => "Falha ao obter dados CIP: {$response}"];
         }
     }
+
+    public function ConsultarPagamentoPix($codigoSolicitacao) {
+
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/pix/{$codigoSolicitacao}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter dados CIP: {$response}"];
+        }
+    }
+
     ##############################################
     ######## FIM BANKING #########################
     ##############################################
@@ -208,8 +223,7 @@ class InterBanking
     ##############################################
     ######## COBRANÇAS ###########################
     ##############################################
-    public function boletoDetalhado(string $nossoNumero)
-    {
+    public function boletoDetalhado(string $nossoNumero) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
 
@@ -231,8 +245,7 @@ class InterBanking
         }
     }
 
-    public function boletoPDF(string $nossoNumero)
-    {
+    public function boletoPDF(string $nossoNumero) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -253,8 +266,7 @@ class InterBanking
         }
     }
 
-    public function cancelarBoleto(string $nossoNumero, string $motivo)
-    {
+    public function cancelarBoleto(string $nossoNumero, string $motivo) {
         $options = $this->optionsRequest;
         $options['body'] = json_encode(['motivoCancelamento' => $motivo]);
         $options['headers']['Content-Type'] = 'application/json';
@@ -277,8 +289,7 @@ class InterBanking
         }
     }
 
-    public function sumarioBoletos($filters)
-    {
+    public function sumarioBoletos($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -300,8 +311,7 @@ class InterBanking
         }
     }
 
-    public function colecaoBoletos($filters)
-    {
+    public function colecaoBoletos($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -323,8 +333,7 @@ class InterBanking
         }
     }
 
-    public function incluirBoletoCobranca($dadosBoleto)
-    {
+    public function incluirBoletoCobranca($dadosBoleto) {
         $options = $this->optionsRequest;
         $options['body'] = json_encode($dadosBoleto);
         $options['headers']['Content-Type'] = 'application/json';
@@ -349,8 +358,7 @@ class InterBanking
     ##############################################
     ######## WEBHOOK #############################
     ##############################################
-    public function criarWebhook(string $webhookUrl)
-    {
+    public function criarWebhook(string $webhookUrl) {
         $options = $this->optionsRequest;
         $options['body'] = json_encode(['webhookUrl' => $webhookUrl]);
         $options['headers']['Content-Type'] = 'application/json';
@@ -372,8 +380,7 @@ class InterBanking
         }
     }
 
-    public function obterWebhookCadastrado()
-    {
+    public function obterWebhookCadastrado() {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -394,8 +401,7 @@ class InterBanking
         }
     }
 
-    public function excluirWebhook()
-    {
+    public function excluirWebhook() {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -416,8 +422,7 @@ class InterBanking
         }
     }
 
-    public function callbacks($filters)
-    {
+    public function callbacks($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -443,8 +448,7 @@ class InterBanking
     ##############################################
     ######## WEBHOOK COBRANÇA PIX ################
     ##############################################
-    public function criarWebhookCobPIx(string $webhookUrl)
-    {
+    public function criarWebhookCobPIx(string $webhookUrl) {
         $options = $this->optionsRequest;
         $options['body'] = json_encode(['webhookUrl' => $webhookUrl]);
         $options['headers']['Content-Type'] = 'application/json';
@@ -466,8 +470,7 @@ class InterBanking
         }
     }
 
-    public function obterWebhookCadastradoCobPIx()
-    {
+    public function obterWebhookCadastradoCobPIx() {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -487,8 +490,7 @@ class InterBanking
         }
     }
 
-    public function excluirWebhookCobPIx()
-    {
+    public function excluirWebhookCobPIx() {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['headers']['Accept'] = "application/problem+json";
@@ -509,8 +511,7 @@ class InterBanking
         }
     }
 
-    public function callbacksCobPIx($filters)
-    {
+    public function callbacksCobPIx($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -535,8 +536,7 @@ class InterBanking
     ##############################################
     ######## COBRANÇAS BOLETO PIX ################
     ##############################################
-    public function ObterCobrancaPix(string $codigoCobranca)
-    {
+    public function ObterCobrancaPix(string $codigoCobranca) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
 
@@ -558,8 +558,7 @@ class InterBanking
         }
     }
 
-    public function boletoPDFPix(string $codigoCobranca)
-    {
+    public function boletoPDFPix(string $codigoCobranca) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -580,8 +579,7 @@ class InterBanking
         }
     }
 
-    public function cancelarBoletoPix(string $codigoCobranca, string $motivo)
-    {
+    public function cancelarBoletoPix(string $codigoCobranca, string $motivo) {
         $options = $this->optionsRequest;
         $options['body'] = json_encode(['motivoCancelamento' => $motivo]);
         $options['headers']['Content-Type'] = 'application/json';
@@ -603,8 +601,7 @@ class InterBanking
         }
     }
 
-    public function sumarioBoletosPix($filters)
-    {
+    public function sumarioBoletosPix($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -626,8 +623,7 @@ class InterBanking
         }
     }
 
-    public function colecaoBoletosPix($filters)
-    {
+    public function colecaoBoletosPix($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -649,8 +645,7 @@ class InterBanking
         }
     }
 
-    public function incluirBoletoCobrancaPix($dadosBoleto)
-    {
+    public function incluirBoletoCobrancaPix($dadosBoleto) {
         $options = $this->optionsRequest;
         $options['body'] = json_encode($dadosBoleto);
         $options['headers']['Content-Type'] = 'application/json';
@@ -675,8 +670,7 @@ class InterBanking
     ##############################################
     ######## PAGAMENTOS ##########################
     ##############################################
-    public function obterDadosCIP($codBarrasLinhaDigitavel)
-    {
+    public function obterDadosCIP($codBarrasLinhaDigitavel) {
         $codBarrasLinhaDigitavel = $this->soNumeros($codBarrasLinhaDigitavel);
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
@@ -698,8 +692,7 @@ class InterBanking
         }
     }
 
-    public function pagarBoleto($filters)
-    {
+    public function pagarBoleto($filters) {
         $options = $this->optionsRequest;
         $options['body'] = json_encode($filters);
         $options['headers']['Content-Type'] = 'application/json';
@@ -722,8 +715,7 @@ class InterBanking
         }
     }
 
-    public function informacaoPagamentoBoleto($filters)
-    {
+    public function informacaoPagamentoBoleto($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -747,8 +739,7 @@ class InterBanking
     }
 
     //essa função foi retirada
-    public function recuperarComprovantePDF($codBarrasLinhaDigitavel)
-    {
+    public function recuperarComprovantePDF($codBarrasLinhaDigitavel) {
         $codBarrasLinhaDigitavel = $this->soNumeros($codBarrasLinhaDigitavel);
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
@@ -770,8 +761,7 @@ class InterBanking
         }
     }
 
-    public function pagarDARF($filters)
-    {
+    public function pagarDARF($filters) {
         $options = $this->optionsRequest;
         $options['body'] = json_encode($filters);
         $options['headers']['Content-Type'] = 'application/json';
@@ -794,8 +784,7 @@ class InterBanking
         }
     }
 
-    public function informacaoPagamentoDARF($filters)
-    {
+    public function informacaoPagamentoDARF($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -818,8 +807,7 @@ class InterBanking
         }
     }
 
-    public function cancelarAgendamentoPagamento(string $codigoTransacao)
-    {
+    public function cancelarAgendamentoPagamento(string $codigoTransacao) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -844,8 +832,7 @@ class InterBanking
     ######## PIX - COBRANÇA IMEDIATA #############
     ##############################################
     // REQUEST BODY SCHEMA
-    public function criarCobrancaImediata($txid, $filter)
-    {
+    public function criarCobrancaImediata($txid, $filter) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['headers']['Content-Type'] = 'application/json';
@@ -869,8 +856,7 @@ class InterBanking
     }
 
     // REQUEST BODY SCHEMA
-    public function atualizarCobrancaImediata($txid, $filter)
-    {
+    public function atualizarCobrancaImediata($txid, $filter) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['headers']['Content-Type'] = 'application/json';
@@ -893,8 +879,7 @@ class InterBanking
         }
     }
 
-    public function consultarCobrancaImediata($txid)
-    {
+    public function consultarCobrancaImediata($txid) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -916,8 +901,7 @@ class InterBanking
     }
 
     // REQUEST BODY SCHEMA
-    public function criarCobrancaImediataPSP($filter)
-    {
+    public function criarCobrancaImediataPSP($filter) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['headers']['Content-Type'] = 'application/json';
@@ -941,8 +925,7 @@ class InterBanking
     }
 
     // QUERY PARAMS
-    public function consultarListaCobrancaImediata($filters)
-    {
+    public function consultarListaCobrancaImediata($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -969,8 +952,7 @@ class InterBanking
     ######## PIX - COBRANÇA VENCIMENTO ###########
     ##############################################
     // REQUEST BODY SCHEMA
-    public function criarCobrancaVencimento($txid, $filter)
-    {
+    public function criarCobrancaVencimento($txid, $filter) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['headers']['Content-Type'] = 'application/json';
@@ -994,8 +976,7 @@ class InterBanking
     }
 
     // REQUEST BODY SCHEMA
-    public function atualizarCobrancaVencimento($txid, $filter)
-    {
+    public function atualizarCobrancaVencimento($txid, $filter) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['headers']['Content-Type'] = 'application/json';
@@ -1018,8 +999,7 @@ class InterBanking
         }
     }
 
-    public function consultarCobrancaVencimento($txid)
-    {
+    public function consultarCobrancaVencimento($txid) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -1041,8 +1021,7 @@ class InterBanking
     }
 
     // QUERY PARAMS
-    public function consultarListaCobrancaVencimento($filters)
-    {
+    public function consultarListaCobrancaVencimento($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -1069,8 +1048,7 @@ class InterBanking
     ######## PIX #################################
     ##############################################
     // PATH PARAMS
-    public function consultarPix($e2eId)
-    {
+    public function consultarPix($e2eId) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -1092,8 +1070,7 @@ class InterBanking
     }
 
     // QUERY PARAMS
-    public function consultarPixRecebidos($filters)
-    {
+    public function consultarPixRecebidos($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -1117,8 +1094,7 @@ class InterBanking
     }
 
     // PATH PARAMS - BETA
-    public function solicitardevolucao($e2eId, $id, $filter)
-    {
+    public function solicitardevolucao($e2eId, $id, $filter) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['headers']['Content-Type'] = 'application/json';
@@ -1142,8 +1118,7 @@ class InterBanking
     }
 
     // PATH PARAMS
-    public function consultadevolucao($e2eId, $id)
-    {
+    public function consultadevolucao($e2eId, $id) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -1168,8 +1143,7 @@ class InterBanking
     ######## WEBHOOK PIX #########################
     ##############################################
     // PATH PARAMETERS
-    public function criarWebhookPix(string $chave, string $webhookUrl)
-    {
+    public function criarWebhookPix(string $chave, string $webhookUrl) {
         $options = $this->optionsRequest;
         $options['body'] = json_encode(['webhookUrl' => $webhookUrl]);
         $options['headers']['Content-Type'] = 'application/json';
@@ -1192,8 +1166,7 @@ class InterBanking
     }
 
     // PATH PARAMETERS
-    public function obterWebhookCadastradoPix(string $chave)
-    {
+    public function obterWebhookCadastradoPix(string $chave) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -1216,8 +1189,7 @@ class InterBanking
     }
 
     // PATH PARAMETERS
-    public function excluirWebhookPix(string $chave)
-    {
+    public function excluirWebhookPix(string $chave) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         try {
@@ -1238,8 +1210,7 @@ class InterBanking
     }
 
     // QUERY PARAMETERS
-    public function callbacksPix($filters)
-    {
+    public function callbacksPix($filters) {
         $options = $this->optionsRequest;
         $options['headers']['Authorization'] = "Bearer {$this->token}";
         $options['query'] = $filters;
@@ -1266,8 +1237,7 @@ class InterBanking
     ##############################################
     ######## FERRAMENTAS #########################
     ##############################################
-    private function parseResultClient($result)
-    {
+    private function parseResultClient($result) {
         $statusCode = $result->getResponse()->getStatusCode();
         $response = $result->getResponse()->getReasonPhrase();
         $body = $result->getResponse()->getBody()->getContents();
@@ -1275,8 +1245,7 @@ class InterBanking
         return ['error' => $body, 'response' => $response, 'statusCode' => $statusCode];
     }
 
-    private function soNumeros($string)
-    {
+    private function soNumeros($string) {
         $somenteNumeros = preg_replace('/[^0-9]/', '', $string);
         return $somenteNumeros;
     }
