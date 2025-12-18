@@ -6,8 +6,12 @@ Cria/edita o webhook cobrança pix.
 
 ## Escopo
 
-Escopo requerido: boleto-cobranca.read<br>
-Rate limit: 5 chamadas por minuto
+Os escopos e rate limits variam por operação:
+
+- Criar/editar webhook: boleto-cobranca.write (5 chamadas por minuto)
+- Obter webhook cadastrado: boleto-cobranca.read (5 chamadas por minuto)
+- Excluir webhook: boleto-cobranca.write (5 chamadas por minuto)
+- Consultar callbacks: boleto-cobranca.read (10 chamadas por minuto)
 
 Suas funcionalidades são:
 

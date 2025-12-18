@@ -1,13 +1,15 @@
-# BOLETO PIX PDF-INTER
+# EDITAR COBRANÇA PIX-INTER
 
-## Boleto Pix PDF
+## Editar cobrança (BETA)
 
-Recupera uma cobrança com código de barras e QRCode em PDF.<br>
+Editar os dados da cobrança de acordo com o `codigoSolicitacao` informado.
 
 ## Escopo
 
-Escopo requerido: boleto-cobranca.read<br>
-Rate limit: 120 chamadas por minuto
+Escopo requerido: boleto-cobranca.write<br>
+Rate limit: 10 chamadas por minuto
+
+## Exemplo
 
 ```php
     require '../../../vendor/autoload.php';
@@ -22,18 +24,20 @@ Rate limit: 120 chamadas por minuto
     ];
 
     $token = '';//seu token
-    $codigoCobranca = '';//informe o codigoCobranca
+    $codigoSolicitacao = '';//codigoSolicitacao (UUID) retornado ao emitir a cobranca
+
+    $dadosEdicao = [
+        'valorNominal' => 10.00,
+        'dataVencimento' => '2025-12-31'
+    ];
+
     try {
         $bankingInter = new InterBanking($config);
         $bankingInter->setToken($token);
 
-        $boletoPDF = $bankingInter->boletoPDFPix($codigoCobranca);
-        // print_r($boletoPDF);
-        // echo $boletoPDF->pdf;
-        $pdf = base64_decode($boletoPDF['response']->pdf);
-
-        header('Content-Type: application/pdf');
-        echo $pdf;
+        echo "<pre>";
+        $response = $bankingInter->editarCobrancaPix($codigoSolicitacao, $dadosEdicao);
+        print_r($response);
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

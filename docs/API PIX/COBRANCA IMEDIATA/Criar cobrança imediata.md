@@ -1,10 +1,34 @@
 # CRIAR COBRANÇA IMEDIATA-INTER
 
 ## Criar cobrança imediata
-Endpoint para criar uma cobrança imediata.<br>
+Endpoint para criar uma cobrança imediata.
+
+## Escopo
+
 Escopo requerido: cob.write<br>
-Você gera o txid.<br>
-Rate limit: 120 chamadas por minuto<br>
+
+## Rate limit
+
+120 chamadas por minuto (produção)
+10 chamadas por minuto (sandbox)
+
+## Observações
+
+- Você gera o txid.
+- O token tem validade de 60 minutos e deverá ser reutilizado nas requisições.
+- Header x-conta-corrente é necessário somente quando a aplicação estiver associada a mais de uma conta corrente
+
+## Parâmetros (path)
+
+- txid (obrigatório): string [a-zA-Z0-9]{26,35}
+
+## Responses
+
+- 201 Cobrança imediata criada
+- 400 Requisição com formato inválido.
+- 403 Requisição de participante autenticado que viola alguma regra de autorização.
+- 404 Recurso solicitado não foi encontrado.
+- 503 Serviço não está disponível no momento.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -14,19 +38,24 @@ Rate limit: 120 chamadas por minuto<br>
     $config = [
         'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
+        // 'sandbox' => true, //opcional
+        // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
-    $txid = '';//gerado por você, min 24 max 35 caracteres
+    $txid = '';//gerado por você, min 26 max 35 caracteres
     $filters = [
         "calendario" => [
             "expiracao" => 86400,//Tempo de vida da cobrança, especificado em segundos a partir da data de criação (Calendario.criacao)
         ],
         "devedor" => [
-            "cpf" => '',//required
-            "nome" => "",//required
+            // Os campos aninhados sob o objeto devedor são opcionais.
+            // Se o campo devedor.nome está preenchido, então deve existir um devedor.cpf OU um devedor.cnpj.
+            // Não é permitido que cpf e cnpj estejam preenchidos ao mesmo tempo.
+            "cpf" => '',
+            "nome" => "",
             //ou
-            // "cnpj" => '',//required
-            // "nome" => "",//required
+            // "cnpj" => '',
+            // "nome" => "",
         ],
         "valor" => [
             "original" => '10.00',//string required- valores monetários referentes à cobrança.
@@ -48,8 +77,8 @@ Rate limit: 120 chamadas por minuto<br>
         $bankingInter->setToken($token);
 
         echo "<pre>";
-        $criarCobrancaImediata = $bankingInter->criarCobrancaImediata($txid, $filters);
-        print_r($criarCobrancaImediata);
+        $response = $bankingInter->criarCobrancaImediata($txid, $filters);
+        print_r($response);
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

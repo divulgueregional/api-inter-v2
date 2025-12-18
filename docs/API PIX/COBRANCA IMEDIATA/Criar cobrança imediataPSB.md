@@ -1,10 +1,28 @@
 # CRIAR COBRANÇA IMEDIATA-INTER
 
 ## Criar cobrança imediata
-Endpoint para criar uma cobrança imediata.<br>
-O banco gera o txid.<br>
+Endpoint para criar uma cobrança imediata, neste caso, o txid é definido pelo PSP.
+
+## Escopo
+
 Escopo requerido: cob.write<br>
-Rate limit: 120 chamadas por minuto<br>
+
+## Rate limit
+
+120 chamadas por minuto (produção)
+10 chamadas por minuto (sandbox)
+
+## Observações
+
+- O token tem validade de 60 minutos e deverá ser reutilizado nas requisições.
+- Header x-conta-corrente é necessário somente quando a aplicação estiver associada a mais de uma conta corrente
+
+## Responses
+
+- 201 Cobrança imediata criada
+- 400 Requisição com formato inválido.
+- 403 Requisição de participante autenticado que viola alguma regra de autorização.
+- 503 Serviço não está disponível no momento.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -14,6 +32,8 @@ Rate limit: 120 chamadas por minuto<br>
     $config = [
         'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
+        // 'sandbox' => true, //opcional
+        // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
     $filters = [
@@ -47,8 +67,8 @@ Rate limit: 120 chamadas por minuto<br>
         $bankingInter->setToken($token);
 
         echo "<pre>";
-        $criarCobrancaImediataPSB = $bankingInter->criarCobrancaImediataPSB($filters);
-        print_r($criarCobrancaImediataPSB);
+        $response = $bankingInter->criarCobrancaImediataPSP($filters);
+        print_r($response);
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

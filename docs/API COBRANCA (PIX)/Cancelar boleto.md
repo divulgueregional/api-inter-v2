@@ -17,6 +17,8 @@ Rate limit: 120 chamadas por minuto
     $config = [
         'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
+        // 'sandbox' => true, //opcional
+        // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
     $token = '';//seu token

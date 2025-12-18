@@ -1,9 +1,33 @@
 # ATUALIZAR COBRANÇA VENCIMENTO-INTER
 
-## Atualizar cobrança vencimento
-Endpoint para atualizar cobrança imediata.<br>
-Escopo requerido: cob.write<br>
-Rate limit: 120 chamadas por minuto<br>
+## Revisar cobrança com vencimento
+Endpoint para revisar uma cobrança com vencimento.
+
+## Escopo
+
+Escopo requerido: cobv.write<br>
+
+## Rate limit
+
+120 chamadas por minuto (produção)
+10 chamadas por minuto (sandbox)
+
+## Observações
+
+- O token tem validade de 60 minutos e deverá ser reutilizado nas requisições.
+- Header x-conta-corrente é necessário somente quando a aplicação estiver associada a mais de uma conta corrente
+
+## Parâmetros (path)
+
+- txid (obrigatório): string [a-zA-Z0-9]{26,35}
+
+## Responses
+
+- 200 Cobrança com vencimento revisada. A revisão deve ser incrementada em 1.
+- 400 Requisição com formato inválido.
+- 403 Requisição de participante autenticado que viola alguma regra de autorização.
+- 404 Recurso solicitado não foi encontrado.
+- 503 Serviço não está disponível no momento.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -13,24 +37,23 @@ Rate limit: 120 chamadas por minuto<br>
     $config = [
         'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
+        // 'sandbox' => true, //opcional
+        // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
     $txid = ''; //gerado ao criar o pix  
-    //JURIDICA
     $filters = [
+        // "loc" => [
+        //     "id" => 7768,
+        // ],
         "devedor" => [
-            "cpf" => '99999999999',//required
-            "nome" => "NOME DA PESSOA",//required
-            //ou
-            // "cnpj" => '',//required
-            // "nome" => "",//required
+            "cpf" => "12345678909",
+            "nome" => "Francisco da Silva",
         ],
         "valor" => [
-            "original" => '5.00',//string required- valores monetários referentes à cobrança.
-            "modalidadeAlteracao" => 0,//int Trata-se de um campo que determina se o valor final do documento pode ser alterado pelo pagador. Na ausência desse campo, assume-se que não se pode alterar o valor do documento de cobrança, ou seja, assume-se o valor 0. Se o campo estiver presente e com valor 1, então está determinado que o valor final da cobrança pode ter seu valor alterado pelo pagador.
+            "original" => "123.45",
         ],
-        // "chave" => "",//string chave Pix do recebedor. Chave podem ser: telefone, e-mail, cpf/cnpj ou EVP.
-        "solicitacaoPagador" => "Meu serviço alterado",//O campo solicitacaoPagador determina um texto a ser apresentado ao pagador para que ele possa digitar uma informação correlata, em formato livre, a ser enviada ao recebedor. Esse texto está limitado a 140 caracteres.
+        "solicitacaoPagador" => "Cobrança dos serviços prestados.",
         // "infoAdicionais" => [
         //     [
         //         "nome" => '"Campo 1',//required
@@ -45,8 +68,8 @@ Rate limit: 120 chamadas por minuto<br>
         $bankingInter->setToken($token);
 
         echo "<pre>";
-        $atualizarCobrancaVencimento = $bankingInter->atualizarCobrancaVencimento($txid, $filters);
-        print_r($atualizarCobrancaVencimento);
+        $response = $bankingInter->atualizarCobrancaVencimento($txid, $filters);
+        print_r($response);
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

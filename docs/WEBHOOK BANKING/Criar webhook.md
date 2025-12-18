@@ -1,15 +1,17 @@
-# CONSULTAR COBRANÇA VENCIMENTO-INTER
+# CRIAR WEBHOOK BANKING-INTER
 
-## Consultar cobrança vencimento
-Endpoint para consultar uma cobrança com vencimento através de um determinado txid.
+## Criar webhook
+Método destinado a criar um webhook para receber notificações (callbacks). O tipo de notificação recebida depende do "tipoWebhook" (path param) selecionado no cadastro. Para cada tipo será necessário um cadastro em separado.
+
+Caso o servidor de webhook retorne erro de recebimento do callback, serão realizadas até 4 tentativas com intervalos de 5, 10, 30 e 60 minutos.
 
 ## Escopo
 
-Escopo requerido: cobv.read<br>
+Escopo requerido: webhook-banking.write<br>
 
 ## Rate limit
 
-120 chamadas por minuto (produção)
+10 chamadas por minuto (produção)
 10 chamadas por minuto (sandbox)
 
 ## Observações
@@ -19,13 +21,20 @@ Escopo requerido: cobv.read<br>
 
 ## Parâmetros (path)
 
-- txid (obrigatório): string [a-zA-Z0-9]{26,35}
+- tipoWebhook (obrigatório): pix-pagamento, boleto-pagamento
+
+## Header
+
+- x-conta-corrente (opcional): string ^[1-9][0-9]*$
+
+## Request (JSON)
+
+- webhookUrl (obrigatório): string (uri) deve iniciar com https://
 
 ## Responses
 
-- 200 Dados da cobrança com vencimento.
-- 403 Requisição de participante autenticado que viola alguma regra de autorização.
-- 404 Recurso solicitado não foi encontrado.
+- 204 Sucesso
+- 400 Requisição com formato inválido.
 - 503 Serviço não está disponível no momento.
 
 ```php
@@ -40,16 +49,19 @@ Escopo requerido: cobv.read<br>
         // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
-    $txid = '';//txid
-
     $token = '';//seu token
+
+    $tipoWebhook = 'pix-pagamento';
+    $webhookUrl = 'https://banking.example.com/api/webhook/';
+
     try {
         $bankingInter = new InterBanking($config);
         $bankingInter->setToken($token);
 
         echo "<pre>";
-        $response = $bankingInter->consultarCobrancaVencimento($txid);
+        $response = $bankingInter->criarWebhookBanking($tipoWebhook, $webhookUrl);
         print_r($response);
+        // Em sucesso: status 204 e response null
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

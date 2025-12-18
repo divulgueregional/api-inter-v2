@@ -1,15 +1,15 @@
-# CONSULTAR COBRANÇA VENCIMENTO-INTER
+# BUSCAR LOTE DE PAGAMENTOS-INTER
 
-## Consultar cobrança vencimento
-Endpoint para consultar uma cobrança com vencimento através de um determinado txid.
+## Buscar lote de pagamentos
+Método para obter informações de um lote de pagamentos.
 
 ## Escopo
 
-Escopo requerido: cobv.read<br>
+Escopo requerido: pagamento-lote.read<br>
 
 ## Rate limit
 
-120 chamadas por minuto (produção)
+20 chamadas por minuto (produção)
 10 chamadas por minuto (sandbox)
 
 ## Observações
@@ -17,16 +17,18 @@ Escopo requerido: cobv.read<br>
 - O token tem validade de 60 minutos e deverá ser reutilizado nas requisições.
 - Header x-conta-corrente é necessário somente quando a aplicação estiver associada a mais de uma conta corrente
 
+## Header
+
+- x-conta-corrente (opcional): string ^[1-9][0-9]*$
+
 ## Parâmetros (path)
 
-- txid (obrigatório): string [a-zA-Z0-9]{26,35}
+- idLote (obrigatório): string (24)
 
 ## Responses
 
-- 200 Dados da cobrança com vencimento.
-- 403 Requisição de participante autenticado que viola alguma regra de autorização.
+- 200 Sucesso
 - 404 Recurso solicitado não foi encontrado.
-- 503 Serviço não está disponível no momento.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -40,16 +42,23 @@ Escopo requerido: cobv.read<br>
         // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
-    $txid = '';//txid
-
     $token = '';//seu token
+    $idLote = '';//id do lote
+
     try {
         $bankingInter = new InterBanking($config);
         $bankingInter->setToken($token);
 
         echo "<pre>";
-        $response = $bankingInter->consultarCobrancaVencimento($txid);
+        $response = $bankingInter->buscarPagamentoLote($idLote);
         print_r($response);
+        // $response['response']->contaCorrente
+        // $response['response']->dataCriacao
+        // $response['response']->pagamentos
+        // $response['response']->idLote
+        // $response['response']->status
+        // $response['response']->meuIdentificador
+        // $response['response']->qtdePagamentos
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

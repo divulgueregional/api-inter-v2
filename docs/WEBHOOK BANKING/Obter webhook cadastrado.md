@@ -1,15 +1,15 @@
-# CONSULTAR COBRANÇA VENCIMENTO-INTER
+# OBTER WEBHOOK BANKING-INTER
 
-## Consultar cobrança vencimento
-Endpoint para consultar uma cobrança com vencimento através de um determinado txid.
+## Obter webhook cadastrado
+Obtém o webhook cadastrado, caso exista.
 
 ## Escopo
 
-Escopo requerido: cobv.read<br>
+Escopo requerido: webhook-banking.read<br>
 
 ## Rate limit
 
-120 chamadas por minuto (produção)
+10 chamadas por minuto (produção)
 10 chamadas por minuto (sandbox)
 
 ## Observações
@@ -19,14 +19,17 @@ Escopo requerido: cobv.read<br>
 
 ## Parâmetros (path)
 
-- txid (obrigatório): string [a-zA-Z0-9]{26,35}
+- tipoWebhook (obrigatório): pix-pagamento, boleto-pagamento
+
+## Header
+
+- x-conta-corrente (opcional): string ^[1-9][0-9]*$
 
 ## Responses
 
-- 200 Dados da cobrança com vencimento.
-- 403 Requisição de participante autenticado que viola alguma regra de autorização.
+- 200 Objeto de retorno do webhook.
 - 404 Recurso solicitado não foi encontrado.
-- 503 Serviço não está disponível no momento.
+- 500 Serviço não está disponível no momento.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -40,16 +43,18 @@ Escopo requerido: cobv.read<br>
         // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
-    $txid = '';//txid
-
     $token = '';//seu token
+    $tipoWebhook = 'pix-pagamento';
+
     try {
         $bankingInter = new InterBanking($config);
         $bankingInter->setToken($token);
 
         echo "<pre>";
-        $response = $bankingInter->consultarCobrancaVencimento($txid);
+        $response = $bankingInter->obterWebhookCadastradoBanking($tipoWebhook);
         print_r($response);
+        // $response['response']->webhookUrl
+        // $response['response']->criacao
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

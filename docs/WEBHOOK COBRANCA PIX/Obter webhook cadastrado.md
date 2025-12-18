@@ -7,7 +7,7 @@ Você só pode ter 1 webhook
 
 ## Escopo
 
-Escopo requerido: boleto-cobranca.write<br>
+Escopo requerido: boleto-cobranca.read<br>
 Rate limit: 5 chamadas por minuto
 
 ```php
@@ -18,6 +18,8 @@ Rate limit: 5 chamadas por minuto
     $config = [
         'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
+        // 'sandbox' => true, //opcional
+        // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
     $token = '';//seu token

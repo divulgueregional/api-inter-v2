@@ -1,10 +1,36 @@
 # CRIAR COBRANÇA VENCIMENTO-INTER
 
-## Criar cobrança vencimento
-Endpoint para criar uma cobrança com vencimento.<br>
+## Criar cobrança com vencimento
+Endpoint para criar uma cobrança com vencimento.
+
+Na cobrança com vencimento é possível parametrizar uma data de vencimento e com isso o pagamento pode ser realizado em data futura, pode também incluir outras informações como juros, multas, outros acréscimos, descontos e outros abatimentos, semelhante ao boleto.
+
+## Escopo
+
 Escopo requerido: cobv.write<br>
-Você gera o txid.<br>
-Rate limit: 120 chamadas por minuto<br>
+
+## Rate limit
+
+120 chamadas por minuto (produção)
+10 chamadas por minuto (sandbox)
+
+## Observações
+
+- Você gera o txid.
+- O token tem validade de 60 minutos e deverá ser reutilizado nas requisições.
+- Header x-conta-corrente é necessário somente quando a aplicação estiver associada a mais de uma conta corrente
+
+## Parâmetros (path)
+
+- txid (obrigatório): string [a-zA-Z0-9]{26,35}
+
+## Responses
+
+- 201 Cobrança com vencimento criada
+- 400 Requisição com formato inválido.
+- 403 Requisição de participante autenticado que viola alguma regra de autorização.
+- 404 Recurso solicitado não foi encontrado.
+- 503 Serviço não está disponível no momento.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -14,46 +40,52 @@ Rate limit: 120 chamadas por minuto<br>
     $config = [
         'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
+        // 'sandbox' => true, //opcional
+        // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
-    $txid = '';//gerado por você, min 24 max 35 caracteres
-    //JURIDICA
+    $txid = '';//gerado por você, min 26 max 35 caracteres
     $filters = [
         "calendario" => [
-            "dataDeVencimento" => "2023-07-25",//Tempo de vida da cobrança, especificado em segundos a partir da data de criação (Calendario.criacao)
-            "validadeAposVencimento" => 30
+            "dataDeVencimento" => "2020-12-31",
+            "validadeAposVencimento" => 30,
         ],
         // "loc" => [
         //     "id" => 789,
         // ],
         "devedor" => [
-            "logradouro" => 'Rua A, 666. Rio Branco',
-            "cidade" => "Caxias do Sul",
-            "uf" => 'RS',
-            "cep" => '95097660',
-            "cnpj" => '99999999999999',
-            "nome" => "MINHA EMPRESA",
+            "logradouro" => "Alameda Souza, Numero 80, Bairro Braz",
+            "cidade" => "Recife",
+            "uf" => "PE",
+            "cep" => "70011750",
+            "cpf" => "12345678909",
+            "nome" => "Francisco da Silva",
+            //ou
+            // "cnpj" => "12345678000195",
+            // "nome" => "Empresa de Serviços SA",
         ],
         "valor" => [
-            "original" => '10.00',//string required- valores monetários referentes à cobrança.
+            "original" => "123.45",
             // "multa" => [
-            //     "modalidade" => "2",// 1-Valor Fixo; 2-Percentual
-            //     "valorPerc" => "5.00",
+            //     "modalidade" => "2",
+            //     "valorPerc" => "15.00",
             // ],
-            // "multa" => [
-            //     "modalidade" => "2",//1-Valor (dias corridos); 2-Percentual ao dia (dias corridos);3-Percentual ao mês (dias corridos);4-Percentual ao ano (dias corridos);5-Valor (dias úteis);6-Percentual ao dia (dias úteis);7-Percentual ao mês (dias úteis);8-Percentual ao ano (dias úteis)
-            //     "valorPerc" => "1.00",
+            // "juros" => [
+            //     "modalidade" => "2",
+            //     "valorPerc" => "2.00",
             // ],
             // "desconto" => [
-            //     "modalidade" => "1",// 1-Valor Fixo; 2-Percentual
+            //     "modalidade" => "1",
             //     "descontoDataFixa" => [
-            //         "data" => "2020-11-30",
-            //         "valorPerc" => "2.00",
+            //         [
+            //             "data" => "2020-11-30",
+            //             "valorPerc" => "30.00",
+            //         ],
             //     ],
             // ],
         ],
-        "chave" => "",//string chave Pix do recebedor. Chave podem ser: telefone, e-mail, cpf/cnpj ou EVP.
-        "solicitacaoPagador" => "Sobre meus serviços",//O campo solicitacaoPagador determina um texto a ser apresentado ao pagador para que ele possa digitar uma informação correlata, em formato livre, a ser enviada ao recebedor. Esse texto está limitado a 140 caracteres.
+        "chave" => "",
+        "solicitacaoPagador" => "Cobrança dos serviços prestados.",
         // "infoAdicionais" => [
         //     [
         //         "nome" => '"Campo 1',//required
@@ -67,8 +99,8 @@ Rate limit: 120 chamadas por minuto<br>
         $bankingInter->setToken($token);
 
         echo "<pre>";
-        $criarCobrancaVencimento = $bankingInter->criarCobrancaVencimento($txid, $filters);
-        print_r($criarCobrancaVencimento);
+        $response = $bankingInter->criarCobrancaVencimento($txid, $filters);
+        print_r($response);
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

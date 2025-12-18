@@ -13,10 +13,19 @@ class InterBanking
     protected $optionsRequest = [];
 
     private $client;
+    private const BASE_URI_PROD = 'https://cdpj.partners.bancointer.com.br';
+    private const BASE_URI_SANDBOX = 'https://cdpj-sandbox.partners.uatinter.co';
     function __construct(array $config)
     {
+        $baseUri = self::BASE_URI_PROD;
+        if (isset($config['base_uri']) && $config['base_uri'] !== '') {
+            $baseUri = $config['base_uri'];
+        } elseif (!empty($config['sandbox']) || (isset($config['environment']) && strtolower((string) $config['environment']) === 'sandbox')) {
+            $baseUri = self::BASE_URI_SANDBOX;
+        }
+
         $this->client = new Client([
-            'base_uri' => 'https://cdpj.partners.bancointer.com.br',
+            'base_uri' => $baseUri,
         ]);
 
         if (isset($config['verify'])) {
@@ -31,10 +40,30 @@ class InterBanking
             $verify = $config['certificate'];
         }
 
+        $headers = [
+            'Accept' => 'application/json'
+        ];
+
+        $contaCorrente = null;
+        if (isset($config['contaCorrente'])) {
+            $contaCorrente = $config['contaCorrente'];
+        } elseif (isset($config['conta_corrente'])) {
+            $contaCorrente = $config['conta_corrente'];
+        } elseif (isset($config['x_conta_corrente'])) {
+            $contaCorrente = $config['x_conta_corrente'];
+        } elseif (isset($config['x-conta-corrente'])) {
+            $contaCorrente = $config['x-conta-corrente'];
+        }
+
+        if ($contaCorrente !== null && (string) $contaCorrente !== '') {
+            $contaCorrente = preg_replace('/\D+/', '', (string) $contaCorrente);
+            if ($contaCorrente !== '') {
+                $headers['x-conta-corrente'] = $contaCorrente;
+            }
+        }
+
         $this->optionsRequest = [
-            'headers' => [
-                'Accept' => 'application/json'
-            ],
+            'headers' => $headers,
             'cert' => $config['certificate'],
             'verify' => $verify,
             'ssl_key' => $config['certificateKey'],
@@ -177,11 +206,14 @@ class InterBanking
         }
     }
 
-    public function IncluirPix($filters)
+    public function IncluirPix($filters, ?string $xIdIdempotente = null)
     {
         $options = $this->optionsRequest;
         $options['headers']['Content-Type'] = 'application/json';
         $options['headers']['Authorization'] = "Bearer {$this->token}";
+        if ($xIdIdempotente !== null && $xIdIdempotente !== '') {
+            $options['headers']['x-id-idempotente'] = $xIdIdempotente;
+        }
         $options['body'] = json_encode($filters);
         try {
             $response = $this->client->request(
@@ -197,7 +229,29 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha ao obter dados CIP: {$response}"];
+            return ['error' => "Falha ao incluir Pix: {$response}"];
+        }
+    }
+
+    public function consultarPagamentoPix(string $codigoSolicitacao)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/pix/{$codigoSolicitacao}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao consultar Pix: {$response}"];
         }
     }
     ##############################################
@@ -441,6 +495,127 @@ class InterBanking
     }
 
     ##############################################
+    ######## WEBHOOK BANKING #####################
+    ##############################################
+    public function criarWebhookBanking(string $tipoWebhook, string $webhookUrl)
+    {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode(['webhookUrl' => $webhookUrl]);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'PUT',
+                "/banking/v2/webhooks/{$tipoWebhook}",
+                $options
+            );
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody()->getContents();
+            $result = $body !== '' ? json_decode($body) : null;
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao criar Webhook Banking: {$response}"];
+        }
+    }
+
+    public function obterWebhookCadastradoBanking(string $tipoWebhook)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/webhooks/{$tipoWebhook}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao obter Webhook Banking: {$response}"];
+        }
+    }
+
+    public function excluirWebhookBanking(string $tipoWebhook)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'DELETE',
+                "/banking/v2/webhooks/{$tipoWebhook}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody()->getContents();
+            $result = $body !== '' ? json_decode($body) : null;
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao excluir Webhook Banking: {$response}"];
+        }
+    }
+
+    public function consultarCallbacksWebhookBanking(string $tipoWebhook, $filters)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['query'] = $filters;
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/webhooks/{$tipoWebhook}/callbacks",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao consultar callbacks (Webhook Banking): {$response}"];
+        }
+    }
+
+    public function reenviarCallbacksWebhookBanking(string $tipoWebhook, $body)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($body);
+
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/banking/v2/webhooks/{$tipoWebhook}/callbacks/retry",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao reenviar callbacks (Webhook Banking): {$response}"];
+        }
+    }
+
+    ##############################################
     ######## WEBHOOK COBRANÇA PIX ################
     ##############################################
     public function criarWebhookCobPIx(string $webhookUrl)
@@ -556,6 +731,85 @@ class InterBanking
             $response = $e->getMessage();
             return ['error' => "Falha ao Obter Cobranca Pix: {$response}"];
         }
+    }
+
+    public function editarCobrancaPix(string $codigoSolicitacao, $dadosEdicao)
+    {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode($dadosEdicao);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+
+        try {
+            $response = $this->client->request(
+                'PATCH',
+                "/cobranca/v3/cobrancas/{$codigoSolicitacao}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao Editar Cobranca Pix: {$response}"];
+        }
+    }
+
+    public function consultarStatusEdicaoCobrancaPix(string $codigoEdicao)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/cobranca/v3/cobrancas/edicao/{$codigoEdicao}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao Consultar Status da Edicao da Cobranca Pix: {$response}"];
+        }
+    }
+
+    public function pagarCobrancaPix(string $codigoSolicitacao, string $pagarCom)
+    {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode(['pagarCom' => $pagarCom]);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/cobranca/v3/cobrancas/{$codigoSolicitacao}/pagar",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody()->getContents();
+            $result = ($body === '') ? null : json_decode($body);
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao Pagar Cobranca Pix: {$response}"];
+        }
+    }
+
+    public function pagarCobrancaPixSandbox(string $codigoSolicitacao, string $pagarCom)
+    {
+        return $this->pagarCobrancaPix($codigoSolicitacao, $pagarCom);
     }
 
     public function boletoPDFPix(string $codigoCobranca)
@@ -742,7 +996,7 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha ao buscar saldo: {$response}"];
+            return ['error' => "Falha ao consultar informacao de pagamento: {$response}"];
         }
     }
 
@@ -814,7 +1068,53 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha ao buscar saldo: {$response}"];
+            return ['error' => "Falha ao consultar informacao de pagamento DARF: {$response}"];
+        }
+    }
+
+    public function incluirPagamentoLote($filters)
+    {
+        $options = $this->optionsRequest;
+        $options['body'] = json_encode($filters);
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/banking/v2/pagamento/lote",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao incluir pagamento em lote: {$response}"];
+        }
+    }
+
+    public function buscarPagamentoLote(string $idLote)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        try {
+            $response = $this->client->request(
+                'GET',
+                "/banking/v2/pagamento/lote/{$idLote}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao buscar pagamento em lote: {$response}"];
         }
     }
 
@@ -864,7 +1164,7 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+            return ['error' => "Falha ao criar Cobranca imediata: {$response}"];
         }
     }
 
@@ -889,7 +1189,7 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+            return ['error' => "Falha ao revisar Cobranca imediata: {$response}"];
         }
     }
 
@@ -911,7 +1211,7 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha ao Consultar Cobranca imediata: {$response}"];
+            return ['error' => "Falha ao consultar Cobranca imediata: {$response}"];
         }
     }
 
@@ -936,7 +1236,7 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+            return ['error' => "Falha ao criar Cobranca imediata (PSP): {$response}"];
         }
     }
 
@@ -961,7 +1261,62 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha ao buscar saldo: {$response}"];
+            return ['error' => "Falha ao consultar lista de Cobrancas imediatas: {$response}"];
+        }
+    }
+
+    // SANDBOX - REQUEST BODY SCHEMA
+    public function pagarCobrancaImediata($txid, $filter)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($filter);
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/pix/v2/cob/pagar/{$txid}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao pagar Cobranca imediata (Sandbox): {$response}"];
+        }
+    }
+
+    public function pagarCobrancaImediataSandbox($txid, $filter)
+    {
+        return $this->pagarCobrancaImediata($txid, $filter);
+    }
+
+    // SANDBOX - REQUEST BODY SCHEMA
+    public function pagarCobrancaImediataQRCodeSandbox($filter)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($filter);
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/pix/v2/sandbox/cob/pagamento",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao pagar Cobranca imediata via QRCode (Sandbox): {$response}"];
         }
     }
 
@@ -989,7 +1344,7 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+            return ['error' => "Falha ao criar Cobranca vencimento: {$response}"];
         }
     }
 
@@ -1014,7 +1369,7 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha a Criar Cobranca imediata: {$response}"];
+            return ['error' => "Falha ao revisar Cobranca vencimento: {$response}"];
         }
     }
 
@@ -1036,7 +1391,7 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha ao Consultar Cobranca imediata: {$response}"];
+            return ['error' => "Falha ao consultar Cobranca vencimento: {$response}"];
         }
     }
 
@@ -1061,8 +1416,42 @@ class InterBanking
             return $this->parseResultClient($e);
         } catch (\Exception $e) {
             $response = $e->getMessage();
-            return ['error' => "Falha ao buscar saldo: {$response}"];
+            return ['error' => "Falha ao consultar lista de Cobrancas vencimento: {$response}"];
         }
+    }
+
+    public function pagarCobrancaVencimento($txid, $filter)
+    {
+        $options = $this->optionsRequest;
+        $options['headers']['Authorization'] = "Bearer {$this->token}";
+        $options['headers']['Content-Type'] = 'application/json';
+        $options['body'] = json_encode($filter);
+        try {
+            $response = $this->client->request(
+                'POST',
+                "/pix/v2/cobv/pagar/{$txid}",
+                $options
+            );
+
+            $statusCode = $response->getStatusCode();
+            $result = json_decode($response->getBody()->getContents());
+            return array('status' => $statusCode, 'response' => $result);
+        } catch (ClientException $e) {
+            return $this->parseResultClient($e);
+        } catch (\Exception $e) {
+            $response = $e->getMessage();
+            return ['error' => "Falha ao pagar Cobranca vencimento (Sandbox): {$response}"];
+        }
+    }
+
+    public function pagarCobrancaVencimentoSandbox($txid, $filter)
+    {
+        return $this->pagarCobrancaVencimento($txid, $filter);
+    }
+
+    public function pagarCobrancaVencimentoQRCodeSandbox($filter)
+    {
+        return $this->pagarCobrancaImediataQRCodeSandbox($filter);
     }
 
     ##############################################

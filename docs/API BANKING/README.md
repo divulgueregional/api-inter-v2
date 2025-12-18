@@ -7,3 +7,5 @@ Estas funcionalidades incluem até o momento:
 - Consultar extrato em pdf
 - Consultar extrato enriquecido
 - Consultar saldo
+- Incluir Pix
+- Consultar Pagamento Pix

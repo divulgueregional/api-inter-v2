@@ -1,27 +1,40 @@
-# CONSULTAR EXTRATO PDF-INTER
+# CONSULTAR PAGAMENTO PIX-INTER
 
-## Consultar Extrato PDF
-Consultar extrato da conta e mostrar em PDF.
+## Consultar Pagamento Pix
+Método para consulta de um pagamento/transferência Pix utilizando o codigo solicitação.
 
 ## Escopo
 
-Escopo requerido: extrato.read<br>
-Rate limit: 10 chamadas por minuto
+Escopo requerido: pagamento-pix.read<br>
+
+## Rate limit
+
+20 chamadas por minuto (produção)
+10 chamadas por minuto (sandbox)
 
 ## Observações
 
-- Consulta máxima de 90 dias entre dataInicio e dataFim
-- Em sandbox, os dados retornados são fictícios (apenas para validação da requisição)
-- A data referência será retornada quando a consulta for realizada em um dia não útil
+- O período máximo para consulta é de 90 dias.
+- O token tem validade de 60 minutos e deverá ser reutilizado nas requisições.
 - Header x-conta-corrente é necessário somente quando a aplicação estiver associada a mais de uma conta corrente
+
+## Header
+
+- x-conta-corrente (opcional): string ^[1-9][0-9]*$
+
+## Parâmetros (path)
+
+- codigoSolicitacao (obrigatório): uuid
 
 ## Responses
 
-- 200 Arquivo
+- 200 Consulta realizada com sucesso
 - 400 Requisição com formato inválido.
+- 401 Requisição não autorizada.
 - 403 Requisição de participante autenticado que viola alguma regra de autorização.
 - 404 Recurso solicitado não foi encontrado.
-- 503 Serviço não está disponível no momento.
+- 422 Erro de validação
+- 500 Serviço não está disponível no momento.
 
 ```php
     require '../../../vendor/autoload.php';
@@ -35,23 +48,18 @@ Rate limit: 10 chamadas por minuto
         // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
-    $filters = [
-        'dataInicio' => '2022-04-20',//obrigatorio
-        'dataFim' =>  '2022-04-28',//obrigatorio
-    ];
-
     $token = '';//seu token
+    $codigoSolicitacao = '';//uuid
+
     try {
         $bankingInter = new InterBanking($config);
         $bankingInter->setToken($token);
 
         echo "<pre>";
-        $extratosPDF = $bankingInter->checkExtratoPDF($filters);
-        // print_r($extratosPDF);
-        $pdf = base64_decode($extratosPDF['response']->pdf);
-
-        header('Content-Type: application/pdf');
-        echo $pdf;
+        $response = $bankingInter->consultarPagamentoPix($codigoSolicitacao);
+        print_r($response);
+        // $response['response']->transacaoPix
+        // $response['response']->historico
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

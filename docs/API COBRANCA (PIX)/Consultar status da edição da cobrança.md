@@ -1,13 +1,15 @@
-# BOLETO PIX PDF-INTER
+# CONSULTAR STATUS DA EDIÇÃO DA COBRANÇA PIX-INTER
 
-## Boleto Pix PDF
+## Consultar status da edição da cobrança (BETA)
 
-Recupera uma cobrança com código de barras e QRCode em PDF.<br>
+Consultar edição da cobrança de acordo com `codigoEdicao` informado.
 
 ## Escopo
 
 Escopo requerido: boleto-cobranca.read<br>
-Rate limit: 120 chamadas por minuto
+Rate limit: 10 chamadas por minuto
+
+## Exemplo
 
 ```php
     require '../../../vendor/autoload.php';
@@ -22,18 +24,15 @@ Rate limit: 120 chamadas por minuto
     ];
 
     $token = '';//seu token
-    $codigoCobranca = '';//informe o codigoCobranca
+    $codigoEdicao = '';//codigoEdicao retornado ao editar a cobranca
+
     try {
         $bankingInter = new InterBanking($config);
         $bankingInter->setToken($token);
 
-        $boletoPDF = $bankingInter->boletoPDFPix($codigoCobranca);
-        // print_r($boletoPDF);
-        // echo $boletoPDF->pdf;
-        $pdf = base64_decode($boletoPDF['response']->pdf);
-
-        header('Content-Type: application/pdf');
-        echo $pdf;
+        echo "<pre>";
+        $response = $bankingInter->consultarStatusEdicaoCobrancaPix($codigoEdicao);
+        print_r($response);
     } catch (\Exception $e) {
         echo $e->getMessage();
     }

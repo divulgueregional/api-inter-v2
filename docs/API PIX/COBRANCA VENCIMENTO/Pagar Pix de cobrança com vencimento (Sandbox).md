@@ -1,32 +1,39 @@
-# CONSULTAR COBRANÇA VENCIMENTO-INTER
+# PAGAR PIX DE COBRANÇA COM VENCIMENTO (SANDBOX)-INTER
 
-## Consultar cobrança vencimento
-Endpoint para consultar uma cobrança com vencimento através de um determinado txid.
+## Pagar Pix de cobrança com vencimento (Sandbox)
+Endpoint para pagar uma cobrança com vencimento via Pagamento Pix.
+
+(Exclusivo para o ambiente Sandbox)
 
 ## Escopo
 
-Escopo requerido: cobv.read<br>
+Escopo requerido: pix.write<br>
 
 ## Rate limit
 
-120 chamadas por minuto (produção)
 10 chamadas por minuto (sandbox)
 
 ## Observações
 
 - O token tem validade de 60 minutos e deverá ser reutilizado nas requisições.
-- Header x-conta-corrente é necessário somente quando a aplicação estiver associada a mais de uma conta corrente
+- Endpoint exclusivo do ambiente Sandbox (use `sandbox => true` no SDK).
 
 ## Parâmetros (path)
 
 - txid (obrigatório): string [a-zA-Z0-9]{26,35}
 
+## Request Body
+
+- valor (obrigatório): number
+
 ## Responses
 
-- 200 Dados da cobrança com vencimento.
+- 201 Cobrança com vencimento Pix paga com sucesso
+- 400 Problemas na requisição.
 - 403 Requisição de participante autenticado que viola alguma regra de autorização.
-- 404 Recurso solicitado não foi encontrado.
 - 503 Serviço não está disponível no momento.
+
+## Exemplo SDK (PHP)
 
 ```php
     require '../../../vendor/autoload.php';
@@ -36,11 +43,14 @@ Escopo requerido: cobv.read<br>
     $config = [
         'certificate' => '../cert/Inter_API_Certificado.crt',//local do certificado crt
         'certificateKey' => '../cert/Inter_API_Chave.key',//local do certificado key
-        // 'sandbox' => true, //opcional
+        'sandbox' => true, //obrigatório para este endpoint
         // 'contaCorrente' => '12345678', //opcional (x-conta-corrente)
     ];
 
     $txid = '';//txid
+    $filters = [
+        'valor' => 150,
+    ];
 
     $token = '';//seu token
     try {
@@ -48,7 +58,7 @@ Escopo requerido: cobv.read<br>
         $bankingInter->setToken($token);
 
         echo "<pre>";
-        $response = $bankingInter->consultarCobrancaVencimento($txid);
+        $response = $bankingInter->pagarCobrancaVencimento($txid, $filters);
         print_r($response);
     } catch (\Exception $e) {
         echo $e->getMessage();
