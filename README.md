@@ -18,7 +18,7 @@ composer require divulgueregional/api-inter-v2
 <b>Pela última tag: </b>
 
 ```php
-composer update divulgueregional/api-inter-v2 1.0.19
+composer update divulgueregional/api-inter-v2 1.0.20
 ```
 
 ## Documentação:
