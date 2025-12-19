@@ -18,7 +18,7 @@ composer require divulgueregional/api-inter-v2
 <b>Pela última tag: </b>
 
 ```php
-composer update divulgueregional/api-inter-v2 1.0.20
+composer update divulgueregional/api-inter-v2 1.0.21
 ```
 
 ## Documentação:
@@ -100,11 +100,13 @@ Acesse a pasta docs e leia o README.md
 - Criar webhook
 - Excluir webhook
 
-## FALTA IMPLEMENTAR
+## API FORUM
 
-- Pix - Location
-- Incluir pagamentos em lote
-- Buscar lote de pagamentos
+- Obter publicação pelo ID
+- Criar publicação
+- Editar publicação
+- Deletar publicação
+- Obter lista de publicações
 
 ## Contato Banco Inter:
 
